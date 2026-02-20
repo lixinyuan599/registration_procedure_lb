@@ -1,0 +1,105 @@
+/* 门店选择页样式 */
+
+.page-container {
+  padding-bottom: 30rpx;
+}
+
+/* Banner */
+.banner {
+  background: linear-gradient(135deg, #4A90D9, #357ABD);
+  padding: 48rpx 32rpx 40rpx;
+  color: #ffffff;
+}
+
+.banner-title {
+  font-size: 40rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.banner-subtitle {
+  font-size: 26rpx;
+  opacity: 0.85;
+}
+
+/* 区域标题 */
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 28rpx 28rpx 8rpx;
+}
+
+/* 门店卡片 */
+.clinic-card {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  position: relative;
+}
+
+.clinic-image {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 12rpx;
+  flex-shrink: 0;
+  background: #f0f0f0;
+}
+
+.clinic-info {
+  flex: 1;
+  margin-left: 24rpx;
+  margin-right: 16rpx;
+  overflow: hidden;
+}
+
+.clinic-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+}
+
+.clinic-address,
+.clinic-phone {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  margin-bottom: 4rpx;
+  display: flex;
+  align-items: center;
+}
+
+.icon-location,
+.icon-phone {
+  margin-right: 6rpx;
+  font-size: 22rpx;
+}
+
+.clinic-desc {
+  font-size: 22rpx;
+  color: var(--text-hint);
+  margin-top: 6rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arrow {
+  font-size: 40rpx;
+  color: var(--text-hint);
+  flex-shrink: 0;
+}
+
+/* 加载 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 0;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: var(--text-hint);
+  margin-top: 16rpx;
+}

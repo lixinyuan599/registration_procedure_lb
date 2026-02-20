@@ -1,0 +1,110 @@
+/* 预约确认页样式 */
+
+.page-container {
+  padding-bottom: 160rpx;
+}
+
+/* 提示栏 */
+.tip-bar {
+  background: #FFF9E6;
+  padding: 18rpx 28rpx;
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #A68B00;
+}
+
+.tip-icon {
+  margin-right: 10rpx;
+}
+
+/* 信息卡片 */
+.confirm-card {
+  margin-top: 20rpx;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+.info-label {
+  font-size: 26rpx;
+  color: var(--text-hint);
+  flex-shrink: 0;
+  width: 160rpx;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: var(--text-primary);
+  text-align: right;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.doctor-name-text {
+  margin-right: 10rpx;
+  font-weight: 500;
+}
+
+.highlight {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.remaining {
+  color: var(--success-color);
+  font-weight: 500;
+}
+
+/* 备注区域 */
+.notes-card {
+  margin-top: 20rpx;
+}
+
+.notes-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  margin-bottom: 16rpx;
+}
+
+.notes-input {
+  width: 100%;
+  min-height: 160rpx;
+  background: var(--bg-page);
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 26rpx;
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+
+.notes-count {
+  text-align: right;
+  font-size: 22rpx;
+  color: var(--text-hint);
+  margin-top: 8rpx;
+}
+
+/* 提交按钮区域 */
+.submit-area {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx 32rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  background: var(--bg-card);
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.submit-btn {
+  border-radius: 16rpx;
+  font-size: 32rpx;
+  padding: 24rpx 0;
+}

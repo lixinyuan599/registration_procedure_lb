@@ -1,0 +1,94 @@
+/* 医生列表页样式 */
+
+.page-container {
+  padding-bottom: 30rpx;
+}
+
+/* 门店信息栏 */
+.clinic-bar {
+  background: var(--primary-light);
+  padding: 20rpx 28rpx;
+  display: flex;
+  align-items: center;
+}
+
+.clinic-bar-icon {
+  font-size: 28rpx;
+  margin-right: 10rpx;
+}
+
+.clinic-bar-name {
+  font-size: 26rpx;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* 医生卡片 */
+.doctor-card {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+}
+
+.doctor-avatar {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #f0f0f0;
+}
+
+.doctor-info {
+  flex: 1;
+  margin-left: 24rpx;
+  margin-right: 16rpx;
+  overflow: hidden;
+}
+
+.doctor-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.doctor-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-right: 12rpx;
+}
+
+.doctor-expertise {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  margin-bottom: 6rpx;
+}
+
+.expertise-label {
+  color: var(--text-hint);
+}
+
+.doctor-desc {
+  font-size: 24rpx;
+  color: var(--text-hint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arrow {
+  font-size: 40rpx;
+  color: var(--text-hint);
+  flex-shrink: 0;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 80rpx 0;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: var(--text-hint);
+}

@@ -1,0 +1,71 @@
+/* 辅助诊断占位页样式 */
+
+.diagnosis-page {
+  min-height: 100vh;
+  background: #f5f6fa;
+  padding: 0 30rpx 60rpx;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100rpx 0 60rpx;
+}
+
+.placeholder-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+}
+
+.placeholder-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.placeholder-desc {
+  font-size: 28rpx;
+  color: #999;
+  margin-bottom: 10rpx;
+}
+
+.placeholder-sub {
+  font-size: 26rpx;
+  color: #4A90D9;
+  font-weight: 500;
+}
+
+.feature-preview {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 36rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.05);
+}
+
+.preview-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.preview-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+.preview-dot {
+  color: #4A90D9;
+  margin-right: 14rpx;
+  font-size: 16rpx;
+  margin-top: 8rpx;
+  flex-shrink: 0;
+}

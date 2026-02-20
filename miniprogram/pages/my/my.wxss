@@ -1,0 +1,99 @@
+/* 个人中心页样式 */
+
+.my-page {
+  min-height: 100vh;
+  background: #f5f6fa;
+  padding-bottom: 30rpx;
+}
+
+/* 用户信息卡片 */
+.user-card {
+  background: linear-gradient(135deg, #4A90D9 0%, #357ABD 100%);
+  padding: 60rpx 40rpx 50rpx;
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.user-info {
+  margin-left: 30rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 8rpx;
+}
+
+.user-role {
+  font-size: 22rpx;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  align-self: flex-start;
+}
+
+.role-admin {
+  background: rgba(250, 173, 20, 0.4);
+}
+
+/* 功能列表 */
+.menu-section {
+  margin: 24rpx 30rpx 0;
+  background: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.menu-title {
+  font-size: 24rpx;
+  color: #999;
+  padding: 24rpx 30rpx 8rpx;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 30rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+  transition: background 0.15s;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:active {
+  background: #f9f9f9;
+}
+
+.menu-icon {
+  font-size: 36rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.menu-label {
+  flex: 1;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.menu-arrow {
+  font-size: 36rpx;
+  color: #ccc;
+  flex-shrink: 0;
+}

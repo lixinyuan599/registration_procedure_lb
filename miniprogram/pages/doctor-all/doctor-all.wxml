@@ -1,0 +1,66 @@
+<!--全部医生列表页-->
+<view class="page-container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索医生姓名或擅长领域"
+        value="{{searchText}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+        confirm-type="search"
+      />
+      <text wx:if="{{searchText}}" class="search-clear" bindtap="onClearSearch">✕</text>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 医生列表 -->
+  <view wx:elif="{{doctors.length > 0}}" class="doctor-list">
+    <view
+      class="doctor-card card"
+      wx:for="{{doctors}}"
+      wx:key="id"
+      data-doctor="{{item}}"
+      bindtap="onDoctorTap"
+    >
+      <!-- 医生头像 -->
+      <image
+        class="doctor-avatar"
+        src="{{item.avatar_url || '/images/doctor-default.png'}}"
+        mode="aspectFill"
+      />
+      <!-- 医生信息 -->
+      <view class="doctor-info">
+        <view class="doctor-header">
+          <text class="doctor-name">{{item.name}}</text>
+        </view>
+        <view class="doctor-expertise">
+          <text class="expertise-label">擅长: </text>
+          <text>{{item.expertise}}</text>
+        </view>
+        <!-- 出诊门店标签 -->
+        <view class="clinic-tags" wx:if="{{item.clinics && item.clinics.length > 0}}">
+          <text class="clinic-tag" wx:for="{{item.clinics}}" wx:for-item="clinic" wx:key="id">
+            {{clinic.name}}
+          </text>
+        </view>
+      </view>
+      <!-- 箭头 -->
+      <view class="arrow">›</view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-state">
+    <text class="empty-icon">👨‍⚕️</text>
+    <text class="empty-text" wx:if="{{searchText}}">未找到相关医生</text>
+    <text class="empty-text" wx:else>暂无在职医生</text>
+  </view>
+</view>

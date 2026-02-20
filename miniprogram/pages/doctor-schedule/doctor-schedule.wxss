@@ -1,0 +1,171 @@
+/* 医生排班页样式 */
+
+.page-container {
+  padding-bottom: 30rpx;
+}
+
+/* 医生信息卡片 */
+.doctor-info-card {
+  margin-top: 20rpx;
+}
+
+.doctor-name-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.doctor-name {
+  font-size: 34rpx;
+  font-weight: 600;
+  margin-right: 12rpx;
+}
+
+.doctor-expertise {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+}
+
+/* 门店选择器 */
+.clinic-selector {
+  display: flex;
+  align-items: center;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid var(--border-color);
+}
+
+.clinic-single {
+  gap: 12rpx;
+}
+
+.clinic-selector-label {
+  font-size: 24rpx;
+  color: var(--text-hint);
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.clinic-selector-value {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 16rpx;
+  background: var(--primary-light);
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.picker-arrow {
+  font-size: 18rpx;
+  color: var(--primary-color);
+}
+
+.clinic-name-text {
+  font-size: 26rpx;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* 区域标题 */
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 28rpx 28rpx 8rpx;
+}
+
+/* 日期分组 */
+.date-group {
+  margin: 0 24rpx 20rpx;
+}
+
+.date-header {
+  display: flex;
+  align-items: baseline;
+  padding: 16rpx 4rpx 12rpx;
+}
+
+.date-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-right: 12rpx;
+}
+
+.date-full {
+  font-size: 22rpx;
+  color: var(--text-hint);
+}
+
+/* 时段网格 */
+.slots-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.slot-item {
+  width: calc(50% - 8rpx);
+  border-radius: 12rpx;
+  padding: 20rpx 16rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.slot-available {
+  background: var(--primary-light);
+  border: 2rpx solid var(--primary-color);
+}
+
+.slot-available:active {
+  background: #D0E3F5;
+}
+
+.slot-full {
+  background: #F5F5F5;
+  border: 2rpx solid #E0E0E0;
+  opacity: 0.7;
+}
+
+.slot-time {
+  font-size: 28rpx;
+  font-weight: 500;
+  margin-bottom: 6rpx;
+}
+
+.slot-available .slot-time {
+  color: var(--primary-dark);
+}
+
+.slot-full .slot-time {
+  color: var(--text-hint);
+}
+
+.slot-status {
+  font-size: 22rpx;
+  color: var(--success-color);
+}
+
+.slot-status-full {
+  color: var(--text-hint);
+}
+
+.empty-hint {
+  font-size: 24rpx;
+  color: var(--text-hint);
+  margin-top: 12rpx;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 80rpx 0;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: var(--text-hint);
+}

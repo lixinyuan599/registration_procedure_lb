@@ -1,0 +1,76 @@
+<!--预约确认页-->
+<view class="page-container">
+  <!-- 提示 -->
+  <view class="tip-bar">
+    <text class="tip-icon">💡</text>
+    <text>请核对以下预约信息，确认无误后提交</text>
+  </view>
+
+  <!-- 预约信息卡片 -->
+  <view class="confirm-card card">
+    <!-- 门店 -->
+    <view class="info-row">
+      <text class="info-label">就诊门店</text>
+      <text class="info-value">{{clinicName}}</text>
+    </view>
+    <view class="divider"></view>
+
+    <!-- 医生 -->
+    <view class="info-row">
+      <text class="info-label">就诊医生</text>
+      <text class="info-value">{{doctorName}}</text>
+    </view>
+    <view class="divider"></view>
+
+    <!-- 擅长领域 -->
+    <view class="info-row" wx:if="{{expertise}}">
+      <text class="info-label">擅长领域</text>
+      <text class="info-value">{{expertise}}</text>
+    </view>
+    <view class="divider" wx:if="{{expertise}}"></view>
+
+    <!-- 日期 -->
+    <view class="info-row">
+      <text class="info-label">就诊日期</text>
+      <text class="info-value highlight">{{date}}</text>
+    </view>
+    <view class="divider"></view>
+
+    <!-- 时段 -->
+    <view class="info-row">
+      <text class="info-label">就诊时段</text>
+      <text class="info-value highlight">{{timeSlot}}</text>
+    </view>
+    <view class="divider"></view>
+
+    <!-- 余号 -->
+    <view class="info-row">
+      <text class="info-label">剩余号源</text>
+      <text class="info-value remaining">{{remaining}} 个</text>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="notes-card card">
+    <view class="notes-title">病情备注 (选填)</view>
+    <textarea
+      class="notes-input"
+      placeholder="请简要描述您的症状，方便医生提前了解"
+      maxlength="200"
+      value="{{notes}}"
+      bindinput="onNotesInput"
+    />
+    <view class="notes-count">{{notes.length}}/200</view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-area">
+    <button
+      class="btn-primary submit-btn"
+      disabled="{{submitting}}"
+      bindtap="onSubmit"
+    >
+      {{submitting ? '提交中...' : '确认预约'}}
+    </button>
+  </view>
+</view>

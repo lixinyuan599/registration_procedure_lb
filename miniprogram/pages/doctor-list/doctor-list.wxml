@@ -1,0 +1,52 @@
+<!--医生列表页-->
+<view class="page-container">
+  <!-- 门店信息栏 -->
+  <view class="clinic-bar">
+    <text class="clinic-bar-icon">🏥</text>
+    <text class="clinic-bar-name">{{clinicName}}</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 医生列表 -->
+  <view wx:elif="{{doctors.length > 0}}" class="doctor-list">
+    <view
+      class="doctor-card card"
+      wx:for="{{doctors}}"
+      wx:key="id"
+      data-doctor="{{item}}"
+      bindtap="onDoctorTap"
+    >
+      <!-- 医生头像 -->
+      <image
+        class="doctor-avatar"
+        src="{{item.avatar_url || '/images/doctor-default.png'}}"
+        mode="aspectFill"
+      />
+      <!-- 医生信息 -->
+      <view class="doctor-info">
+        <view class="doctor-header">
+          <text class="doctor-name">{{item.name}}</text>
+        </view>
+        <view class="doctor-expertise">
+          <text class="expertise-label">擅长: </text>
+          <text>{{item.expertise}}</text>
+        </view>
+        <view class="doctor-desc" wx:if="{{item.description}}">
+          {{item.description}}
+        </view>
+      </view>
+      <!-- 箭头 -->
+      <view class="arrow">›</view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-state">
+    <text class="empty-icon">👨‍⚕️</text>
+    <text class="empty-text">该门店暂无可预约的医生</text>
+  </view>
+</view>

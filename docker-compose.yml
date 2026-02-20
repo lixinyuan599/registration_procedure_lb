@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  # ========== 后端 API ==========
+  backend:
+    build: ./backend
+    container_name: clinic-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/clinic.db:/app/clinic.db  # SQLite 持久化 (生产用 PostgreSQL 可删除此行)
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///./clinic.db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ========== Nginx 反向代理 + HTTPS ==========
+  nginx:
+    image: nginx:alpine
+    container_name: clinic-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./deploy/ssl:/etc/nginx/ssl  # SSL 证书目录
+    depends_on:
+      - backend
+
+  # ========== PostgreSQL (生产环境启用) ==========
+  # db:
+  #   image: postgres:16-alpine
+  #   container_name: clinic-db
+  #   restart: always
+  #   environment:
+  #     POSTGRES_DB: clinic_db
+  #     POSTGRES_USER: clinic_user
+  #     POSTGRES_PASSWORD: your_secure_password
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+
+# volumes:
+#   pgdata:

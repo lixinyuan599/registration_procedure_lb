@@ -1,0 +1,324 @@
+/* 医生排班编辑页样式 */
+
+.page-container {
+  padding-bottom: 40rpx;
+}
+
+/* ========== 门店选择器 ========== */
+.clinic-picker-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 32rpx;
+  background: var(--bg-card);
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.clinic-single {
+  justify-content: flex-start;
+  gap: 16rpx;
+}
+
+.clinic-picker-label {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.clinic-picker-value {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 10rpx 20rpx;
+  background: var(--primary-light);
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.picker-arrow {
+  font-size: 20rpx;
+  color: var(--primary-color);
+}
+
+.clinic-name-text {
+  font-size: 28rpx;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* ========== Tab 栏 ========== */
+.tab-bar {
+  display: flex;
+  background: var(--bg-card);
+  border-bottom: 2rpx solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  position: relative;
+  transition: color 0.2s;
+}
+
+.tab-item:active {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.tab-active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  width: 50%;
+  height: 4rpx;
+  background: var(--primary-color);
+  border-radius: 2rpx;
+}
+
+/* ========== 说明卡片 ========== */
+.info-card {
+  margin-top: 20rpx;
+}
+
+.info-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12rpx;
+}
+
+.info-desc {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ========== 排班网格 ========== */
+.template-grid {
+  margin: 20rpx 24rpx;
+  background: var(--bg-card);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.grid-header {
+  display: flex;
+  background: var(--primary-light);
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.grid-header-cell {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+.grid-label-cell {
+  width: 120rpx;
+  min-width: 120rpx;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-label-col {
+  flex-direction: column;
+}
+
+.grid-row {
+  display: flex;
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.grid-row:last-child {
+  border-bottom: none;
+}
+
+.weekday-label {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.date-sub-label {
+  font-size: 20rpx;
+  color: var(--text-hint);
+  margin-top: 4rpx;
+}
+
+.grid-slot-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 8rpx;
+  border-left: 1rpx solid var(--border-color);
+  transition: background 0.2s;
+}
+
+.slot-on {
+  background: #E6F7E6;
+}
+
+.slot-off {
+  background: #FAFAFA;
+}
+
+.slot-on:active {
+  background: #D0F0D0;
+}
+
+.slot-off:active {
+  background: #F0F0F0;
+}
+
+/* 自定义开关 */
+.slot-toggle {
+  margin-bottom: 8rpx;
+}
+
+.toggle-track {
+  width: 72rpx;
+  height: 40rpx;
+  border-radius: 20rpx;
+  position: relative;
+  transition: background 0.3s;
+}
+
+.track-on {
+  background: var(--success-color);
+}
+
+.track-off {
+  background: #CCCCCC;
+}
+
+.toggle-thumb {
+  width: 34rpx;
+  height: 34rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  position: absolute;
+  top: 3rpx;
+  transition: left 0.3s;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.15);
+}
+
+.thumb-on {
+  left: 35rpx;
+}
+
+.thumb-off {
+  left: 3rpx;
+}
+
+.slot-time-text {
+  font-size: 20rpx;
+  color: var(--text-hint);
+}
+
+.slot-patients-text {
+  font-size: 18rpx;
+  color: var(--warning-color, #F5A623);
+  margin-top: 4rpx;
+}
+
+/* ========== 设置卡片 ========== */
+.setting-card {
+  margin-top: 20rpx;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.setting-label {
+  font-size: 28rpx;
+  color: var(--text-primary);
+}
+
+/* 步进器 */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.stepper-btn {
+  width: 56rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  text-align: center;
+  background: var(--primary-light);
+  color: var(--primary-color);
+  font-size: 32rpx;
+  font-weight: 600;
+  border-radius: 12rpx;
+}
+
+.stepper-btn:active {
+  background: #D0E3F5;
+}
+
+.stepper-value {
+  min-width: 72rpx;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ========== 操作区 ========== */
+.action-bar {
+  margin: 30rpx 24rpx 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.save-btn {
+  margin: 0;
+}
+
+.generate-btn {
+  margin: 0;
+}
+
+/* ========== 非医生提示 ========== */
+.empty-hint {
+  font-size: 24rpx;
+  color: var(--text-hint);
+  margin-top: 12rpx;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 80rpx 0;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: var(--text-hint);
+}

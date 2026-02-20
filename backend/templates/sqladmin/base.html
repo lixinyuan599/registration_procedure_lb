@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/tabler.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/tabler-icons.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/fontawesome.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/select2.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/flatpickr.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/main.css') }}">
+  {% if admin.favicon_url %}
+  <link rel="icon" href="{{ admin.favicon_url }}">
+  {% endif %}
+  {% block head %}
+  {% endblock %}
+  <title>{{ admin.title }}</title>
+</head>
+
+<body>
+  {% block body %}
+  <main>
+    {% block main %}
+    {% endblock %}
+  </main>
+  {% endblock %}
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/jquery.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/tabler.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/popper.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/bootstrap.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/select2.full.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/flatpickr.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/main.js') }}"></script>
+
+  <script type="text/javascript">
+  $(document).ready(function() {
+
+    // ========== 1. 出诊门店 Select2 自定义 (支持空搜索) ==========
+    $(':input[data-role="select2-ajax"]').each(function () {
+      var $el = $(this);
+      var fieldName = $el.attr("name");
+      if (fieldName !== "clinics") return;
+
+      var savedData = $el.data("json") || [];
+      $el.select2('destroy');
+      $el.empty();
+      $el.select2({
+        minimumInputLength: 0,
+        allowClear: true,
+        placeholder: "点击选择门店...",
+        ajax: {
+          url: "/internal/clinics",
+          dataType: "json",
+          delay: 100,
+          data: function (params) {
+            return { term: params.term || "" };
+          },
+          processResults: function (data) {
+            return data;
+          }
+        }
+      });
+      for (var i = 0; i < savedData.length; i++) {
+        var d = savedData[i];
+        if (d.id) {
+          var option = new Option(d.text, d.id, true, true);
+          $el.append(option).trigger("change");
+        }
+      }
+    });
+
+    // ========== 2. 汉化删除确认弹窗的动态文本 ==========
+    // main.js 会监听 modal show 事件并设置英文文本, 这里在 shown 之后覆盖
+    var $deleteModal = $('#modal-delete');
+    if ($deleteModal.length) {
+      $deleteModal.on('shown.bs.modal', function () {
+        var $text = $('#modal-delete-text');
+        var content = $text.html();
+        if (content) {
+          // "Are you sure you want to delete ..." -> "确定要删除 ... 吗？"
+          content = content.replace(/Are you sure you want to delete\s*/gi, '确定要删除 ');
+          content = content.replace(/\s*\?/g, ' 吗？');
+          // "Are you sure you want to delete selected items?" -> "确定要删除选中的项目吗？"
+          content = content.replace(/selected items/gi, '选中的项目');
+          $text.html(content);
+        }
+      });
+    }
+
+    // ========== 3. 汉化 Flash 消息 ==========
+    $('.alert').each(function () {
+      var $alert = $(this);
+      var text = $alert.text().trim();
+      text = text.replace(/was successfully created/gi, '创建成功');
+      text = text.replace(/was successfully updated/gi, '更新成功');
+      text = text.replace(/Were successfully deleted/gi, '已成功删除');
+      text = text.replace(/were successfully deleted/gi, '已成功删除');
+      text = text.replace(/was successfully deleted/gi, '已成功删除');
+      text = text.replace(/Successfully/gi, '操作成功');
+      if (text !== $alert.text().trim()) {
+        // 保留关闭按钮
+        var $closeBtn = $alert.find('.btn-close');
+        $alert.text(text);
+        if ($closeBtn.length) $alert.prepend($closeBtn);
+      }
+    });
+
+    // ========== 4. Select2 默认语言汉化 ==========
+    if ($.fn.select2 && $.fn.select2.defaults) {
+      $.fn.select2.defaults.set("language", {
+        errorLoading: function () { return "加载失败"; },
+        inputTooLong: function (args) { return "请删除多余的 " + (args.input.length - args.maximum) + " 个字符"; },
+        inputTooShort: function (args) { return "请再输入至少 " + (args.minimum - args.input.length) + " 个字符"; },
+        loadingMore: function () { return "加载更多..."; },
+        maximumSelected: function (args) { return "最多只能选择 " + args.maximum + " 项"; },
+        noResults: function () { return "未找到结果"; },
+        searching: function () { return "搜索中..."; },
+        removeAllItems: function () { return "移除所有项"; }
+      });
+    }
+
+  });
+  </script>
+
+  {% block tail %}
+  {% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!--门店选择页-->
+<view class="page-container">
+  <!-- 顶部 Banner -->
+  <view class="banner">
+    <view class="banner-title">门诊预约挂号</view>
+    <view class="banner-subtitle">选择就诊门店，开始预约</view>
+  </view>
+
+  <!-- 门店列表 -->
+  <view class="section-title">附近门店</view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 门店卡片列表 -->
+  <view wx:elif="{{clinics.length > 0}}" class="clinic-list">
+    <view
+      class="clinic-card card"
+      wx:for="{{clinics}}"
+      wx:key="id"
+      data-clinic="{{item}}"
+      bindtap="onClinicTap"
+    >
+      <!-- 门店图片 -->
+      <image
+        class="clinic-image"
+        src="{{item.image_url || '/images/clinic-default.png'}}"
+        mode="aspectFill"
+      />
+      <!-- 门店信息 -->
+      <view class="clinic-info">
+        <view class="clinic-name">{{item.name}}</view>
+        <view class="clinic-address">
+          <text class="icon-location">📍</text>
+          <text>{{item.address}}</text>
+        </view>
+        <view class="clinic-phone" wx:if="{{item.phone}}">
+          <text class="icon-phone">📞</text>
+          <text>{{item.phone}}</text>
+        </view>
+        <view class="clinic-desc" wx:if="{{item.description}}">
+          {{item.description}}
+        </view>
+      </view>
+      <!-- 箭头 -->
+      <view class="arrow">›</view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-state">
+    <text class="empty-icon">🏥</text>
+    <text class="empty-text">暂无可预约的门店</text>
+  </view>
+</view>

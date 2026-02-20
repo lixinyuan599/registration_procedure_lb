@@ -1,0 +1,29 @@
+<!--辅助诊断占位页-->
+<view class="diagnosis-page">
+  <view class="placeholder">
+    <text class="placeholder-icon">🩺</text>
+    <text class="placeholder-title">辅助诊断</text>
+    <text class="placeholder-desc">AI 中医辨证参考功能正在开发中</text>
+    <text class="placeholder-sub">敬请期待</text>
+  </view>
+
+  <view class="feature-preview">
+    <view class="preview-title">即将上线</view>
+    <view class="preview-item">
+      <text class="preview-dot">●</text>
+      <text>输入症状描述，AI 智能辨证分析</text>
+    </view>
+    <view class="preview-item">
+      <text class="preview-dot">●</text>
+      <text>舌象、脉象参考辅助</text>
+    </view>
+    <view class="preview-item">
+      <text class="preview-dot">●</text>
+      <text>中医体质辨识与调理建议</text>
+    </view>
+    <view class="preview-item">
+      <text class="preview-dot">●</text>
+      <text>经典方剂参考推荐</text>
+    </view>
+  </view>
+</view>

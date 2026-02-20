@@ -1,0 +1,49 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/clinic-list/clinic-list",
+    "pages/doctor-all/doctor-all",
+    "pages/doctor-list/doctor-list",
+    "pages/doctor-schedule/doctor-schedule",
+    "pages/appointment-confirm/appointment-confirm",
+    "pages/my-appointments/my-appointments",
+    "pages/doctor-schedule-edit/doctor-schedule-edit",
+    "pages/diagnosis/diagnosis",
+    "pages/my/my"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#4A90D9",
+    "navigationBarTitleText": "门诊挂号",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F5F5",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#4A90D9",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png"
+      },
+      {
+        "pagePath": "pages/my-appointments/my-appointments",
+        "text": "预约",
+        "iconPath": "images/appointment.png",
+        "selectedIconPath": "images/appointment-active.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "images/my.png",
+        "selectedIconPath": "images/my-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

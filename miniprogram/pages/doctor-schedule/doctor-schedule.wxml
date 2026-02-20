@@ -1,0 +1,85 @@
+<!--医生排班页-->
+<view class="page-container">
+  <!-- 医生信息卡片 -->
+  <view class="doctor-info-card card">
+    <view class="doctor-name-row">
+      <text class="doctor-name">{{doctorName}}</text>
+    </view>
+    <view class="doctor-expertise" wx:if="{{expertise}}">擅长: {{expertise}}</view>
+
+    <!-- 门店选择器 (多门店时显示) -->
+    <view class="clinic-selector" wx:if="{{hasMultiClinics}}">
+      <text class="clinic-selector-label">出诊门店</text>
+      <picker
+        mode="selector"
+        range="{{doctorClinics}}"
+        range-key="name"
+        value="{{selectedClinicIdx}}"
+        bindchange="onClinicChange"
+      >
+        <view class="clinic-selector-value">
+          <text>{{doctorClinics[selectedClinicIdx].name}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+    <!-- 单门店时显示门店名 -->
+    <view class="clinic-selector clinic-single" wx:elif="{{doctorClinics.length === 1}}">
+      <text class="clinic-selector-label">出诊门店</text>
+      <text class="clinic-name-text">{{doctorClinics[0].name}}</text>
+    </view>
+  </view>
+
+  <!-- 排班标题 -->
+  <view class="section-title">可预约时段</view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 排班列表 (按日期分组) -->
+  <view wx:elif="{{groupedSchedules.length > 0}}" class="schedule-list">
+    <view
+      class="date-group"
+      wx:for="{{groupedSchedules}}"
+      wx:key="date"
+    >
+      <!-- 日期标题 -->
+      <view class="date-header">
+        <text class="date-label">{{item.dateLabel}}</text>
+        <text class="date-full">{{item.date}}</text>
+      </view>
+
+      <!-- 时段按钮 -->
+      <view class="slots-grid">
+        <view
+          class="slot-item {{slot.isAvailable ? 'slot-available' : 'slot-full'}}"
+          wx:for="{{item.slots}}"
+          wx:for-item="slot"
+          wx:key="id"
+          data-slot="{{slot}}"
+          bindtap="onSlotTap"
+        >
+          <view class="slot-time">{{slot.timeLabel}}</view>
+          <view class="slot-status" wx:if="{{slot.isAvailable && showRemaining}}">
+            余 {{slot.remaining}} 号
+          </view>
+          <view class="slot-status" wx:elif="{{slot.isAvailable && !showRemaining}}">
+            可预约
+          </view>
+          <view class="slot-status slot-status-full" wx:else>
+            已约满
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-state">
+    <text class="empty-icon">📅</text>
+    <text class="empty-text">暂无可预约时段</text>
+    <text class="empty-hint" wx:if="{{hasMultiClinics}}">可切换门店查看其他排班</text>
+  </view>
+</view>

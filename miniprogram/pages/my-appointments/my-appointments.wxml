@@ -1,0 +1,65 @@
+<!--我的预约页-->
+<view class="page-container">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 预约列表 -->
+  <view wx:elif="{{appointments.length > 0}}" class="appointment-list">
+    <view
+      class="appointment-card card"
+      wx:for="{{appointments}}"
+      wx:key="id"
+    >
+      <!-- 卡片头部: 门店 + 状态 -->
+      <view class="card-header">
+        <text class="clinic-name">{{item.clinic.name}}</text>
+        <text class="tag {{item.statusClass}}">{{item.statusText}}</text>
+      </view>
+
+      <view class="divider"></view>
+
+      <!-- 预约信息 -->
+      <view class="card-body">
+        <view class="info-row">
+          <text class="info-icon">👨‍⚕️</text>
+          <text class="info-text">{{item.doctor.name}}{{item.doctor.expertise ? ' · ' + item.doctor.expertise : ''}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-icon">📅</text>
+          <text class="info-text">{{item.dateLabel}} ({{item.appointment_date}})</text>
+        </view>
+        <view class="info-row">
+          <text class="info-icon">🕐</text>
+          <text class="info-text">{{item.time_slot}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.notes}}">
+          <text class="info-icon">📝</text>
+          <text class="info-text notes-text">{{item.notes}}</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="card-footer" wx:if="{{item.status === 'confirmed'}}">
+        <view class="divider"></view>
+        <button
+          class="btn-cancel"
+          data-appointment="{{item}}"
+          bindtap="onCancelTap"
+        >
+          取消预约
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-state">
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">暂无预约记录</text>
+    <navigator url="/pages/home/home" open-type="switchTab" class="empty-link">
+      去预约挂号
+    </navigator>
+  </view>
+</view>

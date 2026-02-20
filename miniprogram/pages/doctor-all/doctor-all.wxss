@@ -1,0 +1,118 @@
+/* 全部医生列表页样式 */
+
+.page-container {
+  padding-bottom: 30rpx;
+}
+
+/* 搜索栏 */
+.search-bar {
+  padding: 20rpx 28rpx;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 40rpx;
+  padding: 14rpx 24rpx;
+}
+
+.search-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.search-clear {
+  font-size: 28rpx;
+  color: #999;
+  padding: 4rpx 8rpx;
+  flex-shrink: 0;
+}
+
+/* 医生卡片 */
+.doctor-card {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+}
+
+.doctor-avatar {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #f0f0f0;
+}
+
+.doctor-info {
+  flex: 1;
+  margin-left: 24rpx;
+  margin-right: 16rpx;
+  overflow: hidden;
+}
+
+.doctor-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.doctor-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-right: 12rpx;
+}
+
+.doctor-expertise {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  margin-bottom: 8rpx;
+}
+
+.expertise-label {
+  color: var(--text-hint);
+}
+
+/* 出诊门店标签 */
+.clinic-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.clinic-tag {
+  font-size: 22rpx;
+  color: #4A90D9;
+  background: rgba(74, 144, 217, 0.1);
+  padding: 4rpx 14rpx;
+  border-radius: 20rpx;
+}
+
+.arrow {
+  font-size: 40rpx;
+  color: var(--text-hint);
+  flex-shrink: 0;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 80rpx 0;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: var(--text-hint);
+}

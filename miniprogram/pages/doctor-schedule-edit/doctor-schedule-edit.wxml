@@ -1,0 +1,274 @@
+<!--医生排班编辑页 - 支持模板/本周/下周 Tab 切换-->
+<view class="page-container">
+
+  <!-- 非医生身份提示 -->
+  <view wx:if="{{!isDoctor}}" class="empty-state">
+    <text class="empty-icon">🔒</text>
+    <text class="empty-text">此页面仅医生可用</text>
+    <text class="empty-hint">请联系管理员将您的账号设为医生角色</text>
+  </view>
+
+  <!-- 医生排班编辑 -->
+  <view wx:else>
+
+    <!-- 门店选择器 -->
+    <view class="clinic-picker-bar" wx:if="{{doctorClinics.length > 1}}">
+      <text class="clinic-picker-label">出诊门店</text>
+      <picker
+        mode="selector"
+        range="{{doctorClinics}}"
+        range-key="name"
+        value="{{selectedClinicIdx}}"
+        bindchange="onClinicChange"
+      >
+        <view class="clinic-picker-value">
+          <text>{{doctorClinics[selectedClinicIdx].name}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+    <view class="clinic-picker-bar clinic-single" wx:elif="{{doctorClinics.length === 1}}">
+      <text class="clinic-picker-label">出诊门店</text>
+      <text class="clinic-name-text">{{doctorClinics[0].name}}</text>
+    </view>
+
+    <!-- Tab 栏 -->
+    <view class="tab-bar">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="key"
+        class="tab-item {{activeTab === index ? 'tab-active' : ''}}"
+        data-idx="{{index}}"
+        bindtap="onSwitchTab"
+      >
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 加载中 -->
+    <view wx:if="{{loading}}" class="loading-container">
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <!-- ========== Tab 0: 排班模板 ========== -->
+    <view wx:elif="{{activeTab === 0}}">
+      <view class="card info-card">
+        <view class="info-title">排班模板设置</view>
+        <view class="info-desc">
+          设置每周固定排班，系统会自动为您生成未来的出诊安排。
+          打开开关表示该时段出诊，关闭表示休息。
+        </view>
+      </view>
+
+      <!-- 排班网格 -->
+      <view class="template-grid">
+        <view class="grid-header">
+          <view class="grid-header-cell grid-label-cell"></view>
+          <view class="grid-header-cell">上午</view>
+          <view class="grid-header-cell">下午</view>
+        </view>
+
+        <view
+          class="grid-row"
+          wx:for="{{weekDays}}"
+          wx:key="weekday"
+        >
+          <view class="grid-label-cell">
+            <text class="weekday-label">{{item.label}}</text>
+          </view>
+          <!-- 上午 -->
+          <view
+            class="grid-slot-cell {{item.morning ? 'slot-on' : 'slot-off'}}"
+            data-weekday="{{item.weekday}}"
+            data-period="morning"
+            bindtap="onToggleSlot"
+          >
+            <view class="slot-toggle">
+              <view class="toggle-track {{item.morning ? 'track-on' : 'track-off'}}">
+                <view class="toggle-thumb {{item.morning ? 'thumb-on' : 'thumb-off'}}"></view>
+              </view>
+            </view>
+            <text class="slot-time-text">09:00-12:00</text>
+          </view>
+          <!-- 下午 -->
+          <view
+            class="grid-slot-cell {{item.afternoon ? 'slot-on' : 'slot-off'}}"
+            data-weekday="{{item.weekday}}"
+            data-period="afternoon"
+            bindtap="onToggleSlot"
+          >
+            <view class="slot-toggle">
+              <view class="toggle-track {{item.afternoon ? 'track-on' : 'track-off'}}">
+                <view class="toggle-thumb {{item.afternoon ? 'thumb-on' : 'thumb-off'}}"></view>
+              </view>
+            </view>
+            <text class="slot-time-text">14:00-17:00</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 最大接诊数设置 -->
+      <view class="card setting-card">
+        <view class="setting-row">
+          <text class="setting-label">每时段最大接诊数</text>
+          <view class="stepper">
+            <view class="stepper-btn" bindtap="onDecreasePatients">-</view>
+            <text class="stepper-value">{{maxPatients}}</text>
+            <view class="stepper-btn" bindtap="onIncreasePatients">+</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="action-bar">
+        <button class="btn-primary save-btn" bindtap="onSaveTemplate" disabled="{{saving}}">
+          {{saving ? '保存中...' : '保存排班模板'}}
+        </button>
+        <button class="btn-outline generate-btn" bindtap="onGenerateSchedules" disabled="{{generating}}">
+          {{generating ? '生成中...' : '根据模板生成排班'}}
+        </button>
+      </view>
+    </view>
+
+    <!-- ========== Tab 1: 本周排班 ========== -->
+    <view wx:elif="{{activeTab === 1}}">
+      <view class="card info-card">
+        <view class="info-title">本周排班</view>
+        <view class="info-desc">{{currentWeekRange}}</view>
+        <view class="info-desc">修改本周的实际出诊安排。已有预约的时段关闭后需注意通知患者。</view>
+      </view>
+
+      <view class="template-grid">
+        <view class="grid-header">
+          <view class="grid-header-cell grid-label-cell">日期</view>
+          <view class="grid-header-cell">上午</view>
+          <view class="grid-header-cell">下午</view>
+        </view>
+
+        <view
+          class="grid-row"
+          wx:for="{{currentWeekDays}}"
+          wx:key="date"
+        >
+          <view class="grid-label-cell grid-label-col">
+            <text class="weekday-label">{{item.label}}</text>
+            <text class="date-sub-label">{{item.dateLabel}}</text>
+          </view>
+          <!-- 上午 -->
+          <view
+            class="grid-slot-cell {{item.morning ? 'slot-on' : 'slot-off'}}"
+            data-week="current"
+            data-idx="{{index}}"
+            data-period="morning"
+            bindtap="onToggleWeekSlot"
+          >
+            <view class="slot-toggle">
+              <view class="toggle-track {{item.morning ? 'track-on' : 'track-off'}}">
+                <view class="toggle-thumb {{item.morning ? 'thumb-on' : 'thumb-off'}}"></view>
+              </view>
+            </view>
+            <text class="slot-time-text">09:00-12:00</text>
+            <text wx:if="{{item.morningPatients > 0}}" class="slot-patients-text">
+              已约{{item.morningPatients}}人
+            </text>
+          </view>
+          <!-- 下午 -->
+          <view
+            class="grid-slot-cell {{item.afternoon ? 'slot-on' : 'slot-off'}}"
+            data-week="current"
+            data-idx="{{index}}"
+            data-period="afternoon"
+            bindtap="onToggleWeekSlot"
+          >
+            <view class="slot-toggle">
+              <view class="toggle-track {{item.afternoon ? 'track-on' : 'track-off'}}">
+                <view class="toggle-thumb {{item.afternoon ? 'thumb-on' : 'thumb-off'}}"></view>
+              </view>
+            </view>
+            <text class="slot-time-text">14:00-17:00</text>
+            <text wx:if="{{item.afternoonPatients > 0}}" class="slot-patients-text">
+              已约{{item.afternoonPatients}}人
+            </text>
+          </view>
+        </view>
+      </view>
+
+      <view class="action-bar">
+        <button class="btn-primary save-btn" data-week="current" bindtap="onSaveWeekSchedule" disabled="{{saving}}">
+          {{saving ? '保存中...' : '保存本周排班'}}
+        </button>
+      </view>
+    </view>
+
+    <!-- ========== Tab 2: 下周排班 ========== -->
+    <view wx:elif="{{activeTab === 2}}">
+      <view class="card info-card">
+        <view class="info-title">下周排班</view>
+        <view class="info-desc">{{nextWeekRange}}</view>
+        <view class="info-desc">提前设置下周的出诊安排，方便患者预约。</view>
+      </view>
+
+      <view class="template-grid">
+        <view class="grid-header">
+          <view class="grid-header-cell grid-label-cell">日期</view>
+          <view class="grid-header-cell">上午</view>
+          <view class="grid-header-cell">下午</view>
+        </view>
+
+        <view
+          class="grid-row"
+          wx:for="{{nextWeekDays}}"
+          wx:key="date"
+        >
+          <view class="grid-label-cell grid-label-col">
+            <text class="weekday-label">{{item.label}}</text>
+            <text class="date-sub-label">{{item.dateLabel}}</text>
+          </view>
+          <!-- 上午 -->
+          <view
+            class="grid-slot-cell {{item.morning ? 'slot-on' : 'slot-off'}}"
+            data-week="next"
+            data-idx="{{index}}"
+            data-period="morning"
+            bindtap="onToggleWeekSlot"
+          >
+            <view class="slot-toggle">
+              <view class="toggle-track {{item.morning ? 'track-on' : 'track-off'}}">
+                <view class="toggle-thumb {{item.morning ? 'thumb-on' : 'thumb-off'}}"></view>
+              </view>
+            </view>
+            <text class="slot-time-text">09:00-12:00</text>
+            <text wx:if="{{item.morningPatients > 0}}" class="slot-patients-text">
+              已约{{item.morningPatients}}人
+            </text>
+          </view>
+          <!-- 下午 -->
+          <view
+            class="grid-slot-cell {{item.afternoon ? 'slot-on' : 'slot-off'}}"
+            data-week="next"
+            data-idx="{{index}}"
+            data-period="afternoon"
+            bindtap="onToggleWeekSlot"
+          >
+            <view class="slot-toggle">
+              <view class="toggle-track {{item.afternoon ? 'track-on' : 'track-off'}}">
+                <view class="toggle-thumb {{item.afternoon ? 'thumb-on' : 'thumb-off'}}"></view>
+              </view>
+            </view>
+            <text class="slot-time-text">14:00-17:00</text>
+            <text wx:if="{{item.afternoonPatients > 0}}" class="slot-patients-text">
+              已约{{item.afternoonPatients}}人
+            </text>
+          </view>
+        </view>
+      </view>
+
+      <view class="action-bar">
+        <button class="btn-primary save-btn" data-week="next" bindtap="onSaveWeekSchedule" disabled="{{saving}}">
+          {{saving ? '保存中...' : '保存下周排班'}}
+        </button>
+      </view>
+    </view>
+
+  </view>
+</view>
