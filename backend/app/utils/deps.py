@@ -1,5 +1,6 @@
 """依赖注入 - 公共依赖"""
 
+from typing import Optional
 from fastapi import Depends, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -8,6 +9,18 @@ from app.database import get_db
 from app.models.user import User
 from app.utils.exceptions import UnauthorizedException
 from app.utils.security import decode_token
+
+
+async def get_tenant_id(
+    x_tenant_id: Optional[str] = Header(None, description="企业 ID (多租户)"),
+) -> Optional[int]:
+    """从请求头 X-Tenant-Id 中获取企业 ID"""
+    if x_tenant_id:
+        try:
+            return int(x_tenant_id)
+        except (ValueError, TypeError):
+            return None
+    return None
 
 
 async def get_current_user(

@@ -14,6 +14,10 @@ class Doctor(Base):
     __tablename__ = "doctors"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    tenant_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("tenants.id"), nullable=True, index=True,
+        comment="所属企业 ID"
+    )
     # clinic_id 保留在数据库中 (SQLite 不支持 DROP COLUMN), 但设为 nullable, 代码不再使用
     clinic_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("clinics.id"), nullable=True, index=True,
@@ -43,6 +47,9 @@ class Doctor(Base):
     )
 
     # ---- 关联关系 ----
+    tenant: Mapped["Tenant | None"] = relationship(
+        back_populates="doctors", lazy="selectin"
+    )
 
     # 多对多: 医生可在多个门店出诊 (唯一的门店关系)
     clinics: Mapped[list["Clinic"]] = relationship(

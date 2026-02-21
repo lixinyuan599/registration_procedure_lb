@@ -21,6 +21,10 @@ class ScheduleTemplate(Base):
     __tablename__ = "schedule_templates"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    tenant_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("tenants.id"), nullable=True, index=True,
+        comment="所属企业 ID"
+    )
     doctor_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("doctors.id"), nullable=False, index=True,
         comment="医生 ID"

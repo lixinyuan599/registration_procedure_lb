@@ -16,6 +16,10 @@ class Schedule(Base):
     __tablename__ = "schedules"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    tenant_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("tenants.id"), nullable=True, index=True,
+        comment="所属企业 ID"
+    )
     doctor_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("doctors.id"), nullable=False, index=True,
         comment="医生 ID"
@@ -54,7 +58,8 @@ class Schedule(Base):
     doctor: Mapped["Doctor"] = relationship(back_populates="schedules")
     clinic: Mapped["Clinic"] = relationship(back_populates="schedules")
     appointments: Mapped[list["Appointment"]] = relationship(
-        back_populates="schedule", lazy="selectin"
+        back_populates="schedule", lazy="selectin",
+        cascade="all, delete-orphan",
     )
 
     # 联合唯一约束: 同一医生同一天同一时段不能重复排班

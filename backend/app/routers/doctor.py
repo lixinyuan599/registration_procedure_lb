@@ -1,5 +1,6 @@
 """医生路由"""
 
+from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,6 +13,7 @@ from app.services import doctor_service
 from app.schemas.doctor import DoctorResponse, ClinicBrief
 from app.schemas.common import success_response
 from app.utils.exceptions import NotFoundException
+from app.utils.deps import get_tenant_id
 
 router = APIRouter(prefix="/clinics", tags=["医生"])
 
@@ -28,17 +30,17 @@ async def list_doctors_by_clinic(
     )
 
 
-# 独立路由 (不依赖 /clinics 前缀)
 doctor_router = APIRouter(prefix="/doctors", tags=["医生"])
 
 
 @doctor_router.get("", summary="获取全部在职医生列表")
 async def list_all_doctors(
     search: str | None = Query(None, description="搜索姓名/擅长领域"),
+    tenant_id: Optional[int] = Depends(get_tenant_id),
     db: AsyncSession = Depends(get_db),
 ):
-    """获取全部在职医生列表，支持模糊搜索"""
-    doctors = await doctor_service.get_all_doctors(db, search)
+    """获取全部在职医生列表 (按企业过滤)"""
+    doctors = await doctor_service.get_all_doctors(db, search, tenant_id=tenant_id)
     return success_response(
         data=[DoctorResponse.model_validate(d) for d in doctors]
     )
@@ -55,7 +57,6 @@ async def get_doctor_clinics(
     if not doctor:
         raise NotFoundException(f"医生不存在 (id={doctor_id})")
 
-    # 通过多对多关联表查询
     result = await db.execute(
         select(Clinic)
         .join(doctor_clinics, Clinic.id == doctor_clinics.c.clinic_id)

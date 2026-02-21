@@ -23,10 +23,16 @@ App({
     loginPromise: null,
     // 当前选中的门店
     selectedClinic: null,
+    // 多租户: 当前企业 ID (从扫码 scene 或缓存中获取)
+    tenantId: null,
   },
 
-  onLaunch() {
+  onLaunch(options) {
     console.log('小程序启动');
+
+    // 多租户: 从扫码 scene 中识别企业
+    this._parseTenantFromScene(options);
+
     // 尝试从缓存恢复登录态
     const token = wx.getStorageSync('token');
     const openid = wx.getStorageSync('openid');
@@ -37,10 +43,42 @@ App({
       this.globalData.openid = openid;
       this.globalData.role = role || 'patient';
       this.globalData.doctorId = doctorId || null;
-      console.log('从缓存恢复登录态, role:', role);
+      console.log('从缓存恢复登录态, role:', role, 'tenantId:', this.globalData.tenantId);
     } else {
-      // 无缓存，发起登录
       this.login();
+    }
+  },
+
+  /**
+   * 从小程序码 scene 参数中解析 tenantId
+   * 小程序码 scene 格式: "t_123" 表示 tenantId=123
+   */
+  _parseTenantFromScene(options) {
+    let scene = null;
+
+    // 从 onLaunch options 中获取
+    if (options && options.query && options.query.scene) {
+      scene = decodeURIComponent(options.query.scene);
+    }
+
+    if (scene && scene.startsWith('t_')) {
+      const tid = parseInt(scene.substring(2));
+      if (!isNaN(tid) && tid > 0) {
+        this.globalData.tenantId = tid;
+        wx.setStorageSync('tenantId', tid);
+        console.log('从扫码识别企业, tenantId:', tid);
+        return;
+      }
+    }
+
+    // 回退: 从缓存读取
+    const cached = wx.getStorageSync('tenantId');
+    if (cached) {
+      this.globalData.tenantId = cached;
+      console.log('从缓存恢复企业, tenantId:', cached);
+    } else if (DEV_MODE) {
+      this.globalData.tenantId = 1;
+      console.log('[DEV] 使用默认企业 tenantId=1');
     }
   },
 

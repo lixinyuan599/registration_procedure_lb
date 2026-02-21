@@ -1,5 +1,6 @@
 """医生业务逻辑"""
 
+from typing import Optional
 from sqlalchemy import select, or_, cast, String
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,14 +10,14 @@ from app.utils.exceptions import NotFoundException
 
 
 async def get_all_doctors(
-    db: AsyncSession, search: str | None = None
+    db: AsyncSession,
+    search: str | None = None,
+    tenant_id: Optional[int] = None,
 ) -> list[Doctor]:
-    """
-    获取所有在职医生列表
-
-    支持按姓名/擅长领域模糊搜索
-    """
+    """获取所有在职医生列表 (可按企业过滤, 支持搜索)"""
     query = select(Doctor).where(Doctor.is_active == True).order_by(Doctor.id)
+    if tenant_id is not None:
+        query = query.where(Doctor.tenant_id == tenant_id)
     if search and search.strip():
         keyword = f"%{search.strip()}%"
         query = query.where(
@@ -32,11 +33,7 @@ async def get_all_doctors(
 async def get_doctors_by_clinic(
     db: AsyncSession, clinic_id: int
 ) -> list[Doctor]:
-    """
-    获取指定门店的在职医生列表
-
-    通过 doctor_clinics 多对多关联表查询
-    """
+    """获取指定门店的在职医生列表 (多对多)"""
     result = await db.execute(
         select(Doctor)
         .join(doctor_clinics, Doctor.id == doctor_clinics.c.doctor_id)

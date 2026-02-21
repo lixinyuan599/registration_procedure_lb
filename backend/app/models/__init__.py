@@ -1,6 +1,8 @@
 """SQLAlchemy ORM 模型"""
 
 from app.models.doctor_clinic import doctor_clinics
+from app.models.tenant import Tenant
+from app.models.admin_user import AdminUser
 from app.models.user import User
 from app.models.clinic import Clinic
 from app.models.doctor import Doctor
@@ -11,6 +13,7 @@ from app.models.site_config import SiteConfig
 
 __all__ = [
     "doctor_clinics",
+    "Tenant", "AdminUser",
     "User", "Clinic", "Doctor", "Schedule",
     "ScheduleTemplate", "Appointment", "SiteConfig",
 ]

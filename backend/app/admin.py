@@ -1,16 +1,22 @@
 """
-管理后台 - 基于 sqladmin
+管理后台 - 基于 sqladmin (多租户版)
 
-提供门店、医生、排班、预约、用户的可视化管理界面。
-访问地址: http://127.0.0.1:8000/admin
+权限模型:
+- super_admin: 看到所有企业的所有数据, 管理企业和管理员账号
+- tenant_admin: 只看到/编辑自己企业的数据
 """
 
+from typing import Any
+
+from sqlalchemy import select, func as sa_func
 from sqladmin import Admin, ModelView, BaseView, expose
 from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
-from wtforms import SelectField
+from wtforms import SelectField, StringField
 
+from app.models.tenant import Tenant
+from app.models.admin_user import AdminUser
 from app.models.user import User
 from app.models.clinic import Clinic
 from app.models.doctor import Doctor
@@ -19,32 +25,58 @@ from app.models.schedule_template import ScheduleTemplate
 from app.models.appointment import Appointment
 from app.models.site_config import SiteConfig
 
+from app.utils.tenant_context import get_tenant_filter_id, is_super_admin
 
-# ========== 管理后台认证 (简易密码保护) ==========
+
+# ========== 管理后台认证 (数据库多账号) ==========
 
 class AdminAuth(AuthenticationBackend):
-    """
-    管理后台登录认证
-
-    默认账号: admin / admin123
-    生产环境请通过环境变量 ADMIN_USERNAME / ADMIN_PASSWORD 修改
-    """
+    """管理后台登录认证 - 从 admin_users 表验证, 支持多租户"""
 
     async def login(self, request: Request) -> bool:
         form = await request.form()
         username = form.get("username")
         password = form.get("password")
 
-        # 从配置读取，默认值用于开发
-        from app.config import get_settings
-        settings = get_settings()
-        valid_username = getattr(settings, "ADMIN_USERNAME", "admin")
-        valid_password = getattr(settings, "ADMIN_PASSWORD", "admin123")
+        from app.database import AsyncSessionLocal
 
-        if username == valid_username and password == valid_password:
-            request.session.update({"authenticated": True})
-            return True
-        return False
+        async with AsyncSessionLocal() as session:
+            result = await session.execute(
+                select(AdminUser).where(AdminUser.username == username)
+            )
+            admin_user = result.scalar_one_or_none()
+
+        if admin_user is None:
+            from app.config import get_settings
+            settings = get_settings()
+            if username == settings.ADMIN_USERNAME and password == settings.ADMIN_PASSWORD:
+                request.session.update({
+                    "authenticated": True,
+                    "admin_id": 0,
+                    "admin_role": "super_admin",
+                    "tenant_id": None,
+                    "admin_name": "超级管理员",
+                })
+                return True
+            return False
+
+        if not admin_user.is_active:
+            return False
+        if not admin_user.verify_password(password):
+            return False
+
+        if admin_user.tenant_id and admin_user.tenant:
+            if admin_user.tenant.status != "approved":
+                return False
+
+        request.session.update({
+            "authenticated": True,
+            "admin_id": admin_user.id,
+            "admin_role": admin_user.role,
+            "tenant_id": admin_user.tenant_id,
+            "admin_name": str(admin_user),
+        })
+        return True
 
     async def logout(self, request: Request) -> bool:
         request.session.clear()
@@ -54,9 +86,161 @@ class AdminAuth(AuthenticationBackend):
         return request.session.get("authenticated", False)
 
 
-# ========== 模型管理视图 ==========
+# ========== 权限辅助 ==========
 
-class ClinicAdmin(ModelView, model=Clinic):
+def _is_super(request: Request) -> bool:
+    return request.session.get("admin_role") == "super_admin"
+
+
+# ========== 租户过滤基类 ==========
+
+class TenantModelView(ModelView):
+    """带租户数据隔离的 ModelView 基类"""
+
+    @property
+    def list_query(self):
+        stmt = select(self.model)
+        tid = get_tenant_filter_id()
+        if tid is not None and hasattr(self.model, "tenant_id"):
+            stmt = stmt.where(self.model.tenant_id == tid)
+        return stmt
+
+    @property
+    def count_query(self):
+        stmt = select(sa_func.count()).select_from(self.model)
+        tid = get_tenant_filter_id()
+        if tid is not None and hasattr(self.model, "tenant_id"):
+            stmt = stmt.where(self.model.tenant_id == tid)
+        return stmt
+
+    async def on_model_change(self, data: dict, model: Any, is_created: bool, request: Request) -> None:
+        """创建记录时自动设置 tenant_id"""
+        if is_created and hasattr(model, "tenant_id"):
+            tid = request.session.get("tenant_id")
+            if tid is not None:
+                model.tenant_id = tid
+
+
+# ========== 超级管理员专用视图 ==========
+
+class TenantAdmin(ModelView, model=Tenant):
+    """企业/组织管理 (超级管理员专用)"""
+    name = "企业"
+    name_plural = "企业管理"
+    icon = "fa-solid fa-building"
+
+    def is_accessible(self, request: Request) -> bool:
+        return _is_super(request)
+
+    def is_visible(self, request: Request) -> bool:
+        return _is_super(request)
+
+    column_list = [
+        Tenant.id, Tenant.name, Tenant.contact_name,
+        Tenant.contact_phone, Tenant.status, Tenant.created_at,
+    ]
+    column_searchable_list = [Tenant.name, Tenant.contact_name]
+    column_sortable_list = [Tenant.id, Tenant.name, Tenant.status, Tenant.created_at]
+    column_default_sort = ("id", True)
+
+    form_columns = [
+        "name", "contact_name", "contact_phone",
+        "description", "logo_url", "status",
+    ]
+
+    form_overrides = {"status": SelectField}
+    form_args = {
+        "status": {
+            "choices": [
+                ("pending", "待审核"),
+                ("approved", "已通过"),
+                ("rejected", "已拒绝"),
+            ],
+        },
+    }
+
+    column_labels = {
+        Tenant.id: "ID",
+        Tenant.name: "企业名称",
+        Tenant.contact_name: "联系人",
+        Tenant.contact_phone: "联系电话",
+        Tenant.description: "简介",
+        Tenant.logo_url: "Logo",
+        Tenant.status: "状态",
+        Tenant.created_at: "创建时间",
+    }
+
+
+class AdminUserAdmin(ModelView, model=AdminUser):
+    """管理员账号管理 (超级管理员专用)"""
+    name = "管理员"
+    name_plural = "管理员账号"
+    icon = "fa-solid fa-user-shield"
+
+    def is_accessible(self, request: Request) -> bool:
+        return _is_super(request)
+
+    def is_visible(self, request: Request) -> bool:
+        return _is_super(request)
+
+    column_list = [
+        AdminUser.id, AdminUser.username, AdminUser.display_name,
+        AdminUser.tenant, AdminUser.role, AdminUser.is_active, AdminUser.created_at,
+    ]
+    column_searchable_list = [AdminUser.username, AdminUser.display_name]
+    column_sortable_list = [AdminUser.id, AdminUser.username, AdminUser.role]
+    column_default_sort = ("id", True)
+
+    form_columns = [
+        "username", "password_hash", "display_name",
+        "tenant", "role", "is_active",
+    ]
+
+    form_overrides = {
+        "password_hash": StringField,
+        "role": SelectField,
+    }
+    form_args = {
+        "password_hash": {"label": "密码 (新建必填, 编辑时留空则不修改)"},
+        "role": {
+            "choices": [
+                ("super_admin", "超级管理员"),
+                ("tenant_admin", "企业管理员"),
+            ],
+        },
+    }
+
+    column_labels = {
+        AdminUser.id: "ID",
+        AdminUser.username: "登录账号",
+        AdminUser.display_name: "显示名称",
+        AdminUser.password_hash: "密码",
+        AdminUser.tenant: "所属企业",
+        AdminUser.role: "角色",
+        AdminUser.is_active: "启用",
+        AdminUser.created_at: "创建时间",
+    }
+
+    column_details_exclude_list = [AdminUser.password_hash]
+
+    async def on_model_change(self, data: dict, model: Any, is_created: bool, request: Request) -> None:
+        pw = data.get("password_hash", "")
+        if pw and ":" not in pw:
+            model.set_password(pw)
+        elif not is_created and not pw:
+            from app.database import AsyncSessionLocal
+            async with AsyncSessionLocal() as session:
+                result = await session.execute(
+                    select(AdminUser.password_hash).where(AdminUser.id == model.id)
+                )
+                original = result.scalar_one_or_none()
+                if original:
+                    model.password_hash = original
+
+
+# ========== 业务数据视图 (租户隔离) ==========
+
+class ClinicAdmin(TenantModelView, model=Clinic):
     """门店管理"""
     name = "门店"
     name_plural = "门店管理"
@@ -87,7 +271,7 @@ class ClinicAdmin(ModelView, model=Clinic):
     }
 
 
-class DoctorAdmin(ModelView, model=Doctor):
+class DoctorAdmin(TenantModelView, model=Doctor):
     """医生管理"""
     name = "医生"
     name_plural = "医生管理"
@@ -106,8 +290,6 @@ class DoctorAdmin(ModelView, model=Doctor):
         "description", "avatar_url", "is_active",
     ]
 
-    # 使用 ajax_refs 让 sqladmin 渲染为 Select2 控件,
-    # 实际搜索由自定义模板 JS 接管 (支持空搜索返回全部门店)
     form_ajax_refs = {
         "clinics": {
             "fields": ("name",),
@@ -127,7 +309,7 @@ class DoctorAdmin(ModelView, model=Doctor):
     }
 
 
-class ScheduleAdmin(ModelView, model=Schedule):
+class ScheduleAdmin(TenantModelView, model=Schedule):
     """排班管理"""
     name = "排班"
     name_plural = "排班管理"
@@ -161,7 +343,7 @@ class ScheduleAdmin(ModelView, model=Schedule):
     }
 
 
-class AppointmentAdmin(ModelView, model=Appointment):
+class AppointmentAdmin(TenantModelView, model=Appointment):
     """预约管理"""
     name = "预约"
     name_plural = "预约管理"
@@ -195,7 +377,7 @@ class AppointmentAdmin(ModelView, model=Appointment):
     }
 
 
-class ScheduleTemplateAdmin(ModelView, model=ScheduleTemplate):
+class ScheduleTemplateAdmin(TenantModelView, model=ScheduleTemplate):
     """排班模板管理"""
     name = "排班模板"
     name_plural = "排班模板管理"
@@ -233,10 +415,16 @@ class ScheduleTemplateAdmin(ModelView, model=ScheduleTemplate):
 
 
 class UserAdmin(ModelView, model=User):
-    """用户管理"""
+    """用户管理 (超级管理员专用)"""
     name = "用户"
     name_plural = "用户管理"
     icon = "fa-solid fa-users"
+
+    def is_accessible(self, request: Request) -> bool:
+        return _is_super(request)
+
+    def is_visible(self, request: Request) -> bool:
+        return _is_super(request)
 
     column_list = [
         User.id, User.openid, User.nickname,
@@ -282,10 +470,16 @@ class UserAdmin(ModelView, model=User):
 
 
 class SiteConfigAdmin(ModelView, model=SiteConfig):
-    """系统配置"""
+    """系统配置 (超级管理员专用)"""
     name = "显示配置"
     name_plural = "显示配置"
     icon = "fa-solid fa-gear"
+
+    def is_accessible(self, request: Request) -> bool:
+        return _is_super(request)
+
+    def is_visible(self, request: Request) -> bool:
+        return _is_super(request)
 
     column_list = [
         SiteConfig.id,
@@ -320,9 +514,16 @@ class WeeklyScheduleLink(BaseView):
         return RedirectResponse(url="/dashboard/weekly-schedule")
 
 
+# ========== 初始化入口 ==========
+
 def setup_admin(app, engine) -> Admin:
     """初始化管理后台并注册到 FastAPI"""
-    authentication_backend = AdminAuth(secret_key="clinic-admin-secret-key-change-me")
+    from app.config import get_settings
+    settings = get_settings()
+
+    authentication_backend = AdminAuth(
+        secret_key=settings.ADMIN_SECRET_KEY,
+    )
 
     admin = Admin(
         app,
@@ -332,13 +533,20 @@ def setup_admin(app, engine) -> Admin:
         templates_dir="templates",
     )
 
-    admin.add_view(SiteConfigAdmin)
+    # 超级管理员专用
+    admin.add_view(TenantAdmin)
+    admin.add_view(AdminUserAdmin)
+
+    # 业务数据 (租户隔离)
     admin.add_view(ClinicAdmin)
     admin.add_view(DoctorAdmin)
     admin.add_view(WeeklyScheduleLink)
     admin.add_view(ScheduleTemplateAdmin)
     admin.add_view(ScheduleAdmin)
     admin.add_view(AppointmentAdmin)
+
+    # 超级管理员专用
+    admin.add_view(SiteConfigAdmin)
     admin.add_view(UserAdmin)
 
     return admin

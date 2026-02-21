@@ -1,7 +1,7 @@
 """门店模型"""
 
 from datetime import datetime
-from sqlalchemy import String, Text, Boolean, DateTime, func
+from sqlalchemy import String, Text, Boolean, Integer, ForeignKey, DateTime, func, text, event
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -14,6 +14,10 @@ class Clinic(Base):
     __tablename__ = "clinics"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    tenant_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("tenants.id"), nullable=True, index=True,
+        comment="所属企业 ID"
+    )
     name: Mapped[str] = mapped_column(
         String(128), nullable=False, comment="门店名称"
     )
@@ -40,8 +44,11 @@ class Clinic(Base):
     )
 
     # ---- 关联关系 ----
+    tenant: Mapped["Tenant | None"] = relationship(
+        back_populates="clinics", lazy="selectin"
+    )
 
-    # 多对多: 所有在该门店出诊的医生
+    # 多对多: 所有在该门店出诊的医生 (删除门店时自动清理关联表)
     m2m_doctors: Mapped[list["Doctor"]] = relationship(
         secondary=doctor_clinics,
         back_populates="clinics",
@@ -49,13 +56,16 @@ class Clinic(Base):
     )
 
     schedules: Mapped[list["Schedule"]] = relationship(
-        back_populates="clinic", lazy="selectin"
+        back_populates="clinic", lazy="selectin",
+        cascade="all, delete-orphan",
     )
     appointments: Mapped[list["Appointment"]] = relationship(
-        back_populates="clinic", lazy="selectin"
+        back_populates="clinic", lazy="selectin",
+        cascade="all, delete-orphan",
     )
     schedule_templates: Mapped[list["ScheduleTemplate"]] = relationship(
-        back_populates="clinic", lazy="selectin"
+        back_populates="clinic", lazy="selectin",
+        cascade="all, delete-orphan",
     )
 
     def __str__(self) -> str:
@@ -63,3 +73,12 @@ class Clinic(Base):
 
     def __repr__(self) -> str:
         return self.name or ""
+
+
+@event.listens_for(Clinic, "before_delete")
+def _nullify_deprecated_doctor_clinic_id(mapper, connection, target):
+    """删除门店前，将 doctors 表中已废弃的 clinic_id 字段置 NULL"""
+    connection.execute(
+        text("UPDATE doctors SET clinic_id = NULL WHERE clinic_id = :cid"),
+        {"cid": target.id},
+    )

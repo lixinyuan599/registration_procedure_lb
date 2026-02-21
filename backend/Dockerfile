@@ -9,6 +9,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 复制代码
 COPY . .
 
+# 创建上传目录
+RUN mkdir -p /app/uploads
+
 # 暴露端口
 EXPOSE 8000
 

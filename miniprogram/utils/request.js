@@ -38,6 +38,10 @@ function request(options) {
   if (!noAuth && app.globalData.token) {
     header['Authorization'] = `Bearer ${app.globalData.token}`;
   }
+  // 多租户: 通过请求头传递 tenant_id
+  if (app.globalData.tenantId) {
+    header['X-Tenant-Id'] = String(app.globalData.tenantId);
+  }
 
   return new Promise((resolve, reject) => {
     wx.request({
