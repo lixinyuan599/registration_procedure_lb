@@ -229,6 +229,7 @@ class AdminUserAdmin(ModelView, model=AdminUser):
         pw = data.get("password_hash", "")
         if pw and ":" not in pw:
             model.set_password(pw)
+            data["password_hash"] = model.password_hash
         elif not is_created and not pw:
             from app.database import AsyncSessionLocal
             async with AsyncSessionLocal() as session:
@@ -238,6 +239,7 @@ class AdminUserAdmin(ModelView, model=AdminUser):
                 original = result.scalar_one_or_none()
                 if original:
                     model.password_hash = original
+                    data["password_hash"] = original
 
 
 # ========== 业务数据视图 (租户隔离) ==========
