@@ -16,9 +16,10 @@ class TenantMiddleware(BaseHTTPMiddleware):
     """从 session 中提取当前管理员的 tenant 信息，写入 contextvars"""
 
     async def dispatch(self, request: Request, call_next):
-        tenant_id = request.session.get("tenant_id")
-        admin_role = request.session.get("admin_role")
-        admin_id = request.session.get("admin_id")
+        session = request.scope.get("session", {})
+        tenant_id = session.get("tenant_id")
+        admin_role = session.get("admin_role")
+        admin_id = session.get("admin_id")
 
         t1 = current_tenant_id.set(tenant_id)
         t2 = current_admin_role.set(admin_role)
