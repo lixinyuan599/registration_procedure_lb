@@ -211,7 +211,7 @@ REGISTER_HTML = """
 """
 
 
-@app.get("/admin/register", include_in_schema=False)
+@app.get("/register", include_in_schema=False)
 async def register_page():
     """企业自助注册页面"""
     return HTMLResponse(REGISTER_HTML)
