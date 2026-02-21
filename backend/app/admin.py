@@ -97,19 +97,21 @@ def _is_super(request: Request) -> bool:
 class TenantModelView(ModelView):
     """带租户数据隔离的 ModelView 基类"""
 
-    @property
-    def list_query(self):
+    def list_query(self, request: Request):
         stmt = select(self.model)
-        tid = get_tenant_filter_id()
-        if tid is not None and hasattr(self.model, "tenant_id"):
+        session = request.scope.get("session", {})
+        role = session.get("admin_role")
+        tid = session.get("tenant_id")
+        if role != "super_admin" and tid is not None and hasattr(self.model, "tenant_id"):
             stmt = stmt.where(self.model.tenant_id == tid)
         return stmt
 
-    @property
-    def count_query(self):
+    def count_query(self, request: Request):
         stmt = select(sa_func.count()).select_from(self.model)
-        tid = get_tenant_filter_id()
-        if tid is not None and hasattr(self.model, "tenant_id"):
+        session = request.scope.get("session", {})
+        role = session.get("admin_role")
+        tid = session.get("tenant_id")
+        if role != "super_admin" and tid is not None and hasattr(self.model, "tenant_id"):
             stmt = stmt.where(self.model.tenant_id == tid)
         return stmt
 
