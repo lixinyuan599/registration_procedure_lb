@@ -41,6 +41,16 @@
   <view class="section" wx:if="{{role === 'doctor'}}">
     <view class="section-title">医生工作台</view>
     <view class="card-row">
+      <view class="feature-card card-queue" bindtap="goDoctorQueue">
+        <view class="card-icon-wrap bg-red">
+          <text class="card-icon">📋</text>
+        </view>
+        <view class="card-body">
+          <text class="card-name">挂号列表</text>
+          <text class="card-desc">查看今日挂号患者 · 排队顺序</text>
+        </view>
+        <text class="card-arrow">›</text>
+      </view>
       <view class="feature-card card-schedule" bindtap="goScheduleEdit">
         <view class="card-icon-wrap bg-purple">
           <text class="card-icon">📅</text>

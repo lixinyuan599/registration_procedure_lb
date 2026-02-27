@@ -58,12 +58,28 @@
   align-items: center;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  margin-right: 16rpx;
+}
+
 .clinic-name {
   font-size: 30rpx;
   font-weight: 600;
   color: var(--text-primary);
-  flex: 1;
-  margin-right: 16rpx;
+}
+
+.queue-badge {
+  margin-left: 16rpx;
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  color: #fff;
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  white-space: nowrap;
 }
 
 /* 预约信息 */

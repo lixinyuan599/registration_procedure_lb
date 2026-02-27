@@ -121,8 +121,8 @@ Page({
       map[dateKey].slots.push({
         ...s,
         timeLabel: `${util.formatTime(s.start_time)} - ${util.formatTime(s.end_time)}`,
-        remaining: s.max_patients - s.current_patients,
-        isAvailable: s.status === 'open' && s.current_patients < s.max_patients,
+        remaining: 3,
+        isAvailable: s.status === 'open',
       });
     });
     return Object.values(map);

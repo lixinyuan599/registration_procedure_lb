@@ -8,6 +8,7 @@
     "pages/appointment-confirm/appointment-confirm",
     "pages/my-appointments/my-appointments",
     "pages/doctor-schedule-edit/doctor-schedule-edit",
+    "pages/doctor-queue/doctor-queue",
     "pages/diagnosis/diagnosis",
     "pages/my/my"
   ],

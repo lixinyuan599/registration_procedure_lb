@@ -89,6 +89,10 @@
   background: rgba(114, 46, 209, 0.12);
 }
 
+.bg-red {
+  background: rgba(245, 63, 63, 0.12);
+}
+
 /* 横幅角色标签 */
 .banner-role-tag {
   position: absolute;

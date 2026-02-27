@@ -1,6 +1,6 @@
 """预约业务逻辑"""
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -58,7 +58,16 @@ async def create_appointment(
     if existing.scalar_one_or_none() is not None:
         raise DuplicateAppointmentException()
 
-    # 4. 创建预约
+    # 4. 计算排队号（该排班下已有的非取消预约数 + 1）
+    count_result = await db.execute(
+        select(func.count(Appointment.id)).where(
+            Appointment.schedule_id == data.schedule_id,
+            Appointment.status != "cancelled",
+        )
+    )
+    queue_number = (count_result.scalar() or 0) + 1
+
+    # 5. 创建预约
     time_slot = f"{schedule.start_time.strftime('%H:%M')}-{schedule.end_time.strftime('%H:%M')}"
     appointment = Appointment(
         user_id=user_id,
@@ -68,6 +77,7 @@ async def create_appointment(
         appointment_date=schedule.date,
         time_slot=time_slot,
         status="confirmed",
+        queue_number=queue_number,
         notes=data.notes,
     )
     db.add(appointment)

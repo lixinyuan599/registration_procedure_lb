@@ -3,6 +3,7 @@
  * 从首页「按门店挂号」入口进入
  */
 const api = require('../../services/api');
+const util = require('../../utils/util');
 
 Page({
   data: {
@@ -27,6 +28,7 @@ Page({
     this.setData({ loading: true });
     try {
       const clinics = await api.getClinics();
+      clinics.forEach(c => { c.image_url = util.fullImageUrl(c.image_url); });
       this.setData({ clinics, loading: false });
     } catch (err) {
       console.error('加载门店失败:', err);

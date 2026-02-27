@@ -46,6 +46,9 @@ class Appointment(Base):
         String(16), default="confirmed",
         comment="状态: confirmed(已确认) / cancelled(已取消) / completed(已完成)"
     )
+    queue_number: Mapped[int] = mapped_column(
+        Integer, default=0, comment="排队序号 (当日该排班的第几号)"
+    )
     notes: Mapped[str | None] = mapped_column(
         Text, nullable=True, comment="患者备注 (病情描述等)"
     )

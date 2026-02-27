@@ -1,0 +1,149 @@
+/* 医生挂号列表页样式 */
+
+.page-container {
+  padding-bottom: 30rpx;
+}
+
+/* 日期选择器 */
+.date-picker-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20rpx 24rpx;
+  padding: 20rpx 28rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.picker-btn {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.picker-label {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--primary-dark, #1a365d);
+}
+
+.picker-arrow {
+  font-size: 20rpx;
+  color: var(--text-hint, #999);
+}
+
+.total-badge {
+  background: var(--primary-color, #4A90D9);
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: 600;
+  padding: 6rpx 20rpx;
+  border-radius: 24rpx;
+}
+
+/* 挂号列表 */
+.queue-list {
+  padding: 0 24rpx;
+}
+
+.queue-card {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 20rpx;
+  padding: 28rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.queue-left {
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.queue-number-circle {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4A90D9 0%, #357ABD 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.queue-number {
+  color: #fff;
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+.queue-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.queue-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.patient-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+}
+
+.queue-detail {
+  padding: 4rpx 0;
+}
+
+.detail-text {
+  font-size: 26rpx;
+  color: var(--text-secondary, #666);
+  line-height: 1.6;
+}
+
+.detail-text.notes {
+  color: var(--text-hint, #999);
+  font-style: italic;
+}
+
+/* 状态标签 */
+.tag {
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 200rpx 40rpx;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: var(--text-hint, #999);
+}
+
+/* 加载中 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 80rpx 0;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: var(--text-hint, #999);
+}

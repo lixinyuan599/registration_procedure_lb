@@ -46,6 +46,11 @@ Page({
     wx.navigateTo({ url: '/pages/diagnosis/diagnosis' });
   },
 
+  /** 挂号列表 (医生) */
+  goDoctorQueue() {
+    wx.navigateTo({ url: '/pages/doctor-queue/doctor-queue' });
+  },
+
   /** 排班管理 (医生) */
   goScheduleEdit() {
     wx.navigateTo({ url: '/pages/doctor-schedule-edit/doctor-schedule-edit' });

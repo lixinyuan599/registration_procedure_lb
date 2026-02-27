@@ -25,6 +25,7 @@ class AppointmentResponse(BaseModel):
     appointment_date: date
     time_slot: str
     status: str
+    queue_number: int = 0
     notes: str | None = None
     created_at: datetime
 
@@ -37,9 +38,25 @@ class AppointmentDetail(BaseModel):
     status: str
     appointment_date: date
     time_slot: str
+    queue_number: int = 0
     notes: str | None = None
     doctor: DoctorBrief
     clinic: ClinicResponse
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class DoctorAppointmentItem(BaseModel):
+    """医生视角的预约项（含患者信息）"""
+    id: int
+    queue_number: int = 0
+    status: str
+    appointment_date: date
+    time_slot: str
+    notes: str | None = None
+    patient_name: str | None = None
+    patient_phone: str | None = None
     created_at: datetime
 
     model_config = {"from_attributes": True}

@@ -1,0 +1,54 @@
+<!--医生挂号列表页-->
+<view class="page-container">
+  <!-- 日期选择 -->
+  <view class="date-picker-bar">
+    <picker mode="selector" range="{{dateOptions}}" range-key="label" bindchange="onDateChange">
+      <view class="picker-btn">
+        <text class="picker-label">{{selectedDate}}</text>
+        <text class="picker-arrow">▼</text>
+      </view>
+    </picker>
+    <text class="total-badge">共 {{totalCount}} 人</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 患者列表 -->
+  <view wx:elif="{{appointments.length > 0}}" class="queue-list">
+    <view
+      class="queue-card card"
+      wx:for="{{appointments}}"
+      wx:key="id"
+    >
+      <view class="queue-left">
+        <view class="queue-number-circle">
+          <text class="queue-number">{{item.displayQueue}}</text>
+        </view>
+      </view>
+      <view class="queue-info">
+        <view class="queue-main">
+          <text class="patient-name">{{item.patient_name || '未知患者'}}</text>
+          <text class="tag {{item.statusClass}}">{{item.statusText}}</text>
+        </view>
+        <view class="queue-detail">
+          <text class="detail-text">时段：{{item.time_slot}}</text>
+        </view>
+        <view class="queue-detail" wx:if="{{item.patient_phone}}">
+          <text class="detail-text">电话：{{item.patient_phone}}</text>
+        </view>
+        <view class="queue-detail" wx:if="{{item.notes}}">
+          <text class="detail-text notes">备注：{{item.notes}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-state">
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">当日暂无挂号记录</text>
+  </view>
+</view>

@@ -3,6 +3,7 @@
  * 展示某门店下所有在职医生
  */
 const api = require('../../services/api');
+const util = require('../../utils/util');
 
 Page({
   data: {
@@ -32,6 +33,7 @@ Page({
     this.setData({ loading: true });
     try {
       const doctors = await api.getDoctorsByClinic(clinicId);
+      doctors.forEach(d => { d.avatar_url = util.fullImageUrl(d.avatar_url); });
       this.setData({ doctors, loading: false });
     } catch (err) {
       console.error('加载医生列表失败:', err);

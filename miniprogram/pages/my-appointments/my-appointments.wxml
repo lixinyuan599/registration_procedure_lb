@@ -12,9 +12,12 @@
       wx:for="{{appointments}}"
       wx:key="id"
     >
-      <!-- 卡片头部: 门店 + 状态 -->
+      <!-- 卡片头部: 门店 + 排队号 + 状态 -->
       <view class="card-header">
-        <text class="clinic-name">{{item.clinic.name}}</text>
+        <view class="header-left">
+          <text class="clinic-name">{{item.clinic.name}}</text>
+          <text wx:if="{{item.queue_number > 0}}" class="queue-badge">第{{item.queue_number}}号</text>
+        </view>
         <text class="tag {{item.statusClass}}">{{item.statusText}}</text>
       </view>
 

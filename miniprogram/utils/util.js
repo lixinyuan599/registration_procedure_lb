@@ -70,6 +70,19 @@ function getStatusInfo(status) {
   return map[status] || { text: status, tagClass: 'tag-gray' };
 }
 
+/**
+ * 补全图片 URL
+ * 后端返回的图片路径可能是 /uploads/xxx.jpg 这样的相对路径
+ * 需要拼接服务器地址变成完整 URL
+ */
+const IMG_BASE = 'http://8.130.87.247';
+
+function fullImageUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return IMG_BASE + url;
+}
+
 module.exports = {
   formatDate,
   formatTime,
@@ -78,4 +91,5 @@ module.exports = {
   isTomorrow,
   friendlyDate,
   getStatusInfo,
+  fullImageUrl,
 };

@@ -61,11 +61,18 @@ Page({
         notes: this.data.notes || null,
       });
 
-      wx.showToast({ title: '预约成功', icon: 'success', duration: 1500 });
+      const queueNum = result.queue_number || 0;
+      const msg = queueNum > 0 ? `预约成功，您是第${queueNum}号` : '预约成功';
 
-      setTimeout(() => {
-        wx.switchTab({ url: '/pages/my-appointments/my-appointments' });
-      }, 1500);
+      wx.showModal({
+        title: '预约成功',
+        content: queueNum > 0 ? `您的排队号是 第${queueNum}号\n请按时就诊` : '预约已确认，请按时就诊',
+        showCancel: false,
+        confirmText: '查看预约',
+        success() {
+          wx.switchTab({ url: '/pages/my-appointments/my-appointments' });
+        },
+      });
     } catch (err) {
       console.error('预约失败:', err);
       this.setData({ submitting: false });

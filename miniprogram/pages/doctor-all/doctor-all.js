@@ -1,4 +1,5 @@
 const api = require('../../services/api');
+const util = require('../../utils/util');
 
 Page({
   data: {
@@ -17,6 +18,7 @@ Page({
     this.setData({ loading: true });
     try {
       const doctors = await api.getAllDoctors(search || '');
+      doctors.forEach(d => { d.avatar_url = util.fullImageUrl(d.avatar_url); });
       this.setData({ doctors, loading: false });
     } catch (e) {
       console.error('加载医生列表失败:', e);

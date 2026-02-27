@@ -191,6 +191,18 @@ function unbindDoctor() {
   return http.post('/users/unbind-doctor');
 }
 
+/** ========== 医生挂号列表 API ========== */
+
+/**
+ * 医生查看自己的挂号列表
+ * @param {string} appointmentDate - 日期 YYYY-MM-DD (可选, 默认今天)
+ */
+function getDoctorQueue(appointmentDate) {
+  const params = {};
+  if (appointmentDate) params.appointment_date = appointmentDate;
+  return http.get('/appointments/doctor-queue', params);
+}
+
 /** ========== 系统配置 API ========== */
 
 /**
@@ -217,6 +229,7 @@ module.exports = {
   generateSchedules,
   getWeekSchedules,
   updateWeekSchedules,
+  getDoctorQueue,
   getDisplayConfig,
   getMyProfile,
   bindDoctor,
