@@ -1,9 +1,12 @@
 <view class="home-page">
   <!-- 顶部横幅 -->
   <view class="banner">
-    <view class="banner-text">
-      <text class="banner-title">{{clinicName || '仁心堂中医门诊'}}</text>
-      <text class="banner-subtitle">专注中医调理 · 用心守护健康</text>
+    <view class="banner-content">
+      <image wx:if="{{tenantLogo}}" class="banner-logo" src="{{tenantLogo}}" mode="aspectFit" />
+      <view class="banner-text">
+        <text class="banner-title">{{tenantName || '门诊挂号'}}</text>
+        <text class="banner-subtitle" wx:if="{{tenantSubtitle}}">{{tenantSubtitle}}</text>
+      </view>
     </view>
     <view class="banner-role-tag" wx:if="{{role === 'doctor'}}">
       <text>医生端</text>

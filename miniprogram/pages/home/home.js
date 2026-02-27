@@ -1,16 +1,19 @@
 const api = require('../../services/api');
+const util = require('../../utils/util');
 const app = getApp();
 
 Page({
   data: {
-    clinicName: '',
+    tenantName: '',
+    tenantSubtitle: '',
+    tenantLogo: '',
     notice: '',
     role: 'patient',
     doctorId: null,
   },
 
   onLoad() {
-    this._loadConfig();
+    this._loadTenantInfo();
   },
 
   onShow() {
@@ -20,14 +23,18 @@ Page({
     });
   },
 
-  async _loadConfig() {
+  async _loadTenantInfo() {
     try {
-      const config = await api.getDisplayConfig();
-      if (config && config.clinic_name) {
-        this.setData({ clinicName: config.clinic_name });
+      const tenant = await api.getCurrentTenant();
+      if (tenant) {
+        this.setData({
+          tenantName: tenant.name || '门诊挂号',
+          tenantSubtitle: tenant.subtitle || '',
+          tenantLogo: tenant.logo_url ? util.fullImageUrl(tenant.logo_url) : '',
+        });
       }
     } catch (e) {
-      console.log('加载配置失败', e);
+      console.log('加载企业信息失败', e);
     }
   },
 

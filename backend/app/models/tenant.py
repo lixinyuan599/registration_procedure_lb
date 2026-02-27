@@ -22,6 +22,9 @@ class Tenant(Base):
     contact_phone: Mapped[str | None] = mapped_column(
         String(20), nullable=True, comment="联系电话"
     )
+    subtitle: Mapped[str | None] = mapped_column(
+        String(256), nullable=True, comment="企业标语/副标题 (显示在小程序首页)"
+    )
     description: Mapped[str | None] = mapped_column(
         Text, nullable=True, comment="企业简介"
     )

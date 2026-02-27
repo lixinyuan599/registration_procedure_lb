@@ -138,15 +138,16 @@ class TenantAdmin(ModelView, model=Tenant):
         return _is_super(request)
 
     column_list = [
-        Tenant.id, Tenant.name, Tenant.contact_name,
-        Tenant.contact_phone, Tenant.status, Tenant.created_at,
+        Tenant.id, Tenant.name, Tenant.subtitle,
+        Tenant.contact_name, Tenant.contact_phone,
+        Tenant.status, Tenant.created_at,
     ]
     column_searchable_list = [Tenant.name, Tenant.contact_name]
     column_sortable_list = [Tenant.id, Tenant.name, Tenant.status, Tenant.created_at]
     column_default_sort = ("id", True)
 
     form_columns = [
-        "name", "contact_name", "contact_phone",
+        "name", "subtitle", "contact_name", "contact_phone",
         "description", "logo_url", "status",
     ]
 
@@ -164,12 +165,67 @@ class TenantAdmin(ModelView, model=Tenant):
     column_labels = {
         Tenant.id: "ID",
         Tenant.name: "企业名称",
+        Tenant.subtitle: "标语",
         Tenant.contact_name: "联系人",
         Tenant.contact_phone: "联系电话",
         Tenant.description: "简介",
         Tenant.logo_url: "Logo",
         Tenant.status: "状态",
         Tenant.created_at: "创建时间",
+    }
+
+
+class MyTenantAdmin(ModelView, model=Tenant):
+    """企业设置 (企业管理员编辑自己的品牌信息)"""
+    name = "企业设置"
+    name_plural = "企业设置"
+    icon = "fa-solid fa-store"
+
+    can_create = False
+    can_delete = False
+
+    def is_accessible(self, request: Request) -> bool:
+        role = request.session.get("admin_role")
+        tid = request.session.get("tenant_id")
+        return role == "tenant_admin" and tid is not None
+
+    def is_visible(self, request: Request) -> bool:
+        return self.is_accessible(request)
+
+    def list_query(self, request: Request):
+        stmt = select(Tenant)
+        tid = request.session.get("tenant_id")
+        if tid is not None:
+            stmt = stmt.where(Tenant.id == tid)
+        return stmt
+
+    def count_query(self, request: Request):
+        stmt = select(sa_func.count()).select_from(Tenant)
+        tid = request.session.get("tenant_id")
+        if tid is not None:
+            stmt = stmt.where(Tenant.id == tid)
+        return stmt
+
+    column_list = [
+        Tenant.id, Tenant.name, Tenant.subtitle,
+        Tenant.contact_name, Tenant.contact_phone,
+        Tenant.logo_url, Tenant.status,
+    ]
+
+    form_columns = [
+        "name", "subtitle", "contact_name", "contact_phone",
+        "description", "logo_url",
+    ]
+
+    column_labels = {
+        Tenant.id: "ID",
+        Tenant.name: "企业名称",
+        Tenant.subtitle: "标语 (显示在小程序首页)",
+        Tenant.contact_name: "联系人",
+        Tenant.contact_phone: "联系电话",
+        Tenant.description: "简介",
+        Tenant.logo_url: "Logo",
+        Tenant.status: "状态",
     }
 
 
@@ -550,6 +606,9 @@ def setup_admin(app, engine) -> Admin:
     # 超级管理员专用
     admin.add_view(TenantAdmin)
     admin.add_view(AdminUserAdmin)
+
+    # 企业管理员: 编辑自己企业品牌
+    admin.add_view(MyTenantAdmin)
 
     # 业务数据 (租户隔离)
     admin.add_view(ClinicAdmin)

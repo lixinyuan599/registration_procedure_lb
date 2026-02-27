@@ -203,6 +203,15 @@ function getDoctorQueue(appointmentDate) {
   return http.get('/appointments/doctor-queue', params);
 }
 
+/** ========== 企业信息 API ========== */
+
+/**
+ * 获取当前企业品牌信息 (名称、标语、Logo等)
+ */
+function getCurrentTenant() {
+  return http.get('/tenants/current', {}, false);
+}
+
 /** ========== 系统配置 API ========== */
 
 /**
@@ -230,6 +239,7 @@ module.exports = {
   getWeekSchedules,
   updateWeekSchedules,
   getDoctorQueue,
+  getCurrentTenant,
   getDisplayConfig,
   getMyProfile,
   bindDoctor,
