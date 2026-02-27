@@ -9,7 +9,7 @@
  * - 支持 loading 提示
  */
 
-const BASE_URL = 'http://127.0.0.1:8000/api/v1';
+const BASE_URL = 'http://8.130.87.247/api/v1';
 
 /**
  * 发起请求
@@ -27,7 +27,8 @@ function request(options) {
     url, method = 'GET', data = {},
     showLoading = true, noAuth = false, _isRetry = false,
   } = options;
-  const app = getApp();
+  const app = getApp() || {};
+  const gd = app.globalData || {};
 
   if (showLoading) {
     wx.showLoading({ title: '加载中...', mask: true });
@@ -35,12 +36,12 @@ function request(options) {
 
   // 构造请求头
   const header = { 'Content-Type': 'application/json' };
-  if (!noAuth && app.globalData.token) {
-    header['Authorization'] = `Bearer ${app.globalData.token}`;
+  if (!noAuth && gd.token) {
+    header['Authorization'] = `Bearer ${gd.token}`;
   }
   // 多租户: 通过请求头传递 tenant_id
-  if (app.globalData.tenantId) {
-    header['X-Tenant-Id'] = String(app.globalData.tenantId);
+  if (gd.tenantId) {
+    header['X-Tenant-Id'] = String(gd.tenantId);
   }
 
   return new Promise((resolve, reject) => {
@@ -54,17 +55,23 @@ function request(options) {
 
         // 401 未认证: 尝试重新登录后重试 (仅一次)
         if (res.statusCode === 401 && !_isRetry && !noAuth) {
-          console.log('Token 过期，尝试重新登录...');
-          app.login()
-            .then(() => {
-              // 重试原请求
-              request({ ...options, _isRetry: true })
-                .then(resolve)
-                .catch(reject);
-            })
-            .catch((err) => {
-              reject({ code: 401, message: '登录失败' });
-            });
+          const realApp = getApp();
+          if (realApp && realApp.login) {
+            console.log('[request] 401, 尝试重新登录...');
+            realApp.login()
+              .then(() => {
+                console.log('[request] 重新登录成功');
+                request({ ...options, _isRetry: true })
+                  .then(resolve)
+                  .catch(reject);
+              })
+              .catch((err) => {
+                console.error('[request] 重新登录失败:', err);
+                reject({ code: 401, message: '登录失败' });
+              });
+          } else {
+            reject({ code: 401, message: '未登录' });
+          }
           return;
         }
 

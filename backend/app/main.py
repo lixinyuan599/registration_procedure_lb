@@ -11,7 +11,7 @@ from fastapi.responses import HTMLResponse
 
 from app.config import get_settings
 from app.database import engine, init_db
-from app.routers import clinic, doctor, schedule, schedule_template, appointment, auth, site_config
+from app.routers import clinic, doctor, schedule, schedule_template, appointment, auth, site_config, user
 from app.admin import setup_admin
 from app.views.weekly_schedule import router as weekly_schedule_router
 from app.utils.exceptions import AppException, app_exception_handler, general_exception_handler
@@ -84,6 +84,7 @@ app.include_router(schedule.router, prefix=settings.API_V1_PREFIX)
 app.include_router(schedule_template.router, prefix=settings.API_V1_PREFIX)
 app.include_router(appointment.router, prefix=settings.API_V1_PREFIX)
 app.include_router(site_config.router, prefix=settings.API_V1_PREFIX)
+app.include_router(user.router, prefix=settings.API_V1_PREFIX)
 
 app.include_router(weekly_schedule_router)
 

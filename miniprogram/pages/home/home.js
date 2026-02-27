@@ -1,16 +1,24 @@
 const api = require('../../services/api');
+const app = getApp();
 
 Page({
   data: {
     clinicName: '',
     notice: '',
+    role: 'patient',
+    doctorId: null,
   },
 
   onLoad() {
     this._loadConfig();
   },
 
-  onShow() {},
+  onShow() {
+    this.setData({
+      role: app.globalData.role || 'patient',
+      doctorId: app.globalData.doctorId || null,
+    });
+  },
 
   async _loadConfig() {
     try {
@@ -36,5 +44,10 @@ Page({
   /** 辅助诊断 */
   goDiagnosis() {
     wx.navigateTo({ url: '/pages/diagnosis/diagnosis' });
+  },
+
+  /** 排班管理 (医生) */
+  goScheduleEdit() {
+    wx.navigateTo({ url: '/pages/doctor-schedule-edit/doctor-schedule-edit' });
   },
 });

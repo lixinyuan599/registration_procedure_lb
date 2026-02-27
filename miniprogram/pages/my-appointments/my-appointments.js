@@ -30,6 +30,7 @@ Page({
   async loadAppointments() {
     this.setData({ loading: true });
     try {
+      await app.ensureLogin();
       const appointments = await api.getMyAppointments();
       // 为每个预约添加状态展示信息
       const list = appointments.map((apt) => {

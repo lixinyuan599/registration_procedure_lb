@@ -167,6 +167,30 @@ function updateWeekSchedules(doctorId, week, slots, clinicId) {
   return http.put(url, { slots });
 }
 
+/** ========== 用户 API ========== */
+
+/**
+ * 获取当前用户信息 (角色、医生绑定状态等)
+ */
+function getMyProfile() {
+  return http.get('/users/me');
+}
+
+/**
+ * 通过邀请码绑定医生身份
+ * @param {string} inviteCode - 管理员提供的邀请码
+ */
+function bindDoctor(inviteCode) {
+  return http.post('/users/bind-doctor', { invite_code: inviteCode });
+}
+
+/**
+ * 解除医生身份绑定
+ */
+function unbindDoctor() {
+  return http.post('/users/unbind-doctor');
+}
+
 /** ========== 系统配置 API ========== */
 
 /**
@@ -194,4 +218,7 @@ module.exports = {
   getWeekSchedules,
   updateWeekSchedules,
   getDisplayConfig,
+  getMyProfile,
+  bindDoctor,
+  unbindDoctor,
 };

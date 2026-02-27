@@ -283,7 +283,7 @@ class DoctorAdmin(TenantModelView, model=Doctor):
 
     column_list = [
         Doctor.id, Doctor.name, Doctor.expertise,
-        "clinics", Doctor.is_active,
+        "clinics", Doctor.invite_code, Doctor.is_active,
     ]
     column_searchable_list = [Doctor.name, Doctor.expertise]
     column_sortable_list = [Doctor.id, Doctor.name]
@@ -291,7 +291,7 @@ class DoctorAdmin(TenantModelView, model=Doctor):
 
     form_columns = [
         "clinics", "name", "expertise",
-        "description", "avatar_url", "is_active",
+        "description", "avatar_url", "invite_code", "is_active",
     ]
 
     form_ajax_refs = {
@@ -308,9 +308,19 @@ class DoctorAdmin(TenantModelView, model=Doctor):
         "clinics": "出诊门店",
         Doctor.description: "简介",
         Doctor.avatar_url: "头像URL",
+        Doctor.invite_code: "邀请码",
         Doctor.is_active: "在职",
         Doctor.created_at: "创建时间",
     }
+
+    async def on_model_change(self, data: dict, model: Any, is_created: bool, request: Request) -> None:
+        """新建医生时自动生成邀请码"""
+        await super().on_model_change(data, model, is_created, request)
+        if is_created and not data.get("invite_code"):
+            from app.models.doctor import _generate_invite_code
+            code = _generate_invite_code()
+            model.invite_code = code
+            data["invite_code"] = code
 
 
 class ScheduleAdmin(TenantModelView, model=Schedule):

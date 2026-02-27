@@ -5,9 +5,12 @@
       <text class="banner-title">{{clinicName || '仁心堂中医门诊'}}</text>
       <text class="banner-subtitle">专注中医调理 · 用心守护健康</text>
     </view>
+    <view class="banner-role-tag" wx:if="{{role === 'doctor'}}">
+      <text>医生端</text>
+    </view>
   </view>
 
-  <!-- 功能区域 -->
+  <!-- 预约挂号区域 -->
   <view class="section">
     <view class="section-title">预约挂号</view>
     <view class="card-row">
@@ -34,8 +37,35 @@
     </view>
   </view>
 
-  <!-- 更多功能 -->
-  <view class="section">
+  <!-- 医生专属功能 -->
+  <view class="section" wx:if="{{role === 'doctor'}}">
+    <view class="section-title">医生工作台</view>
+    <view class="card-row">
+      <view class="feature-card card-schedule" bindtap="goScheduleEdit">
+        <view class="card-icon-wrap bg-purple">
+          <text class="card-icon">📅</text>
+        </view>
+        <view class="card-body">
+          <text class="card-name">排班管理</text>
+          <text class="card-desc">设置排班模板 · 调整本周/下周排班</text>
+        </view>
+        <text class="card-arrow">›</text>
+      </view>
+      <view class="feature-card card-diagnosis-doc" bindtap="goDiagnosis">
+        <view class="card-icon-wrap bg-orange">
+          <text class="card-icon">🩺</text>
+        </view>
+        <view class="card-body">
+          <text class="card-name">辅助诊断</text>
+          <text class="card-desc">AI 中医辨证参考工具</text>
+        </view>
+        <text class="card-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 更多功能 (患者视角) -->
+  <view class="section" wx:if="{{role !== 'doctor'}}">
     <view class="section-title">更多服务</view>
     <view class="card-row">
       <view class="feature-card card-diagnosis" bindtap="goDiagnosis">

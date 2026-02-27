@@ -49,6 +49,9 @@ Page({
   async onSubmit() {
     if (this.data.submitting) return;
 
+    const app = getApp();
+    await app.ensureLogin();
+
     this.setData({ submitting: true });
     try {
       const result = await api.createAppointment({
@@ -60,7 +63,6 @@ Page({
 
       wx.showToast({ title: '预约成功', icon: 'success', duration: 1500 });
 
-      // 延迟跳转到我的预约页
       setTimeout(() => {
         wx.switchTab({ url: '/pages/my-appointments/my-appointments' });
       }, 1500);

@@ -6,6 +6,7 @@
 
 /* 顶部横幅 */
 .banner {
+  position: relative;
   background: linear-gradient(135deg, #4A90D9 0%, #357ABD 100%);
   padding: 60rpx 40rpx 50rpx;
   border-radius: 0 0 40rpx 40rpx;
@@ -82,6 +83,22 @@
 
 .bg-orange {
   background: rgba(250, 173, 20, 0.12);
+}
+
+.bg-purple {
+  background: rgba(114, 46, 209, 0.12);
+}
+
+/* 横幅角色标签 */
+.banner-role-tag {
+  position: absolute;
+  right: 40rpx;
+  top: 60rpx;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  color: #fff;
 }
 
 .card-icon {

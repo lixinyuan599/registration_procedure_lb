@@ -9,44 +9,87 @@
     />
     <view class="user-info">
       <text class="user-name">{{nickname || '微信用户'}}</text>
-      <text class="user-role" wx:if="{{role === 'doctor'}}">医生</text>
-      <text class="user-role role-admin" wx:elif="{{role === 'admin'}}">管理员</text>
+      <view class="role-tags">
+        <text class="user-role" wx:if="{{role === 'doctor'}}">医生 · {{doctorName}}</text>
+        <text class="user-role role-patient" wx:else>患者</text>
+      </view>
     </view>
   </view>
 
-  <!-- 功能列表 -->
+  <!-- 医生认证区域 -->
+  <view class="menu-section" wx:if="{{role !== 'doctor'}}">
+    <view class="menu-title">医生认证</view>
+    <view class="menu-item" bindtap="openBindModal">
+      <text class="menu-icon">🔑</text>
+      <text class="menu-label">输入邀请码认证医生身份</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 医生专属功能 -->
+  <view class="menu-section" wx:if="{{role === 'doctor'}}">
+    <view class="menu-title">医生功能</view>
+    <view class="menu-item" bindtap="goScheduleEdit">
+      <text class="menu-icon">📅</text>
+      <text class="menu-label">排班管理</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 常用功能 -->
   <view class="menu-section">
     <view class="menu-title">常用功能</view>
-
     <view class="menu-item" bindtap="goMyAppointments">
       <text class="menu-icon">📋</text>
       <text class="menu-label">我的预约</text>
       <text class="menu-arrow">›</text>
     </view>
-
-    <!-- 医生专属功能 -->
-    <block wx:if="{{role === 'doctor'}}">
-      <view class="menu-item" bindtap="goScheduleEdit">
-        <text class="menu-icon">📅</text>
-        <text class="menu-label">排班设置</text>
-        <text class="menu-arrow">›</text>
-      </view>
-    </block>
   </view>
 
+  <!-- 其他 -->
   <view class="menu-section">
     <view class="menu-title">其他</view>
-
     <view class="menu-item" bindtap="goPersonalInfo">
       <text class="menu-icon">👤</text>
       <text class="menu-label">个人信息</text>
       <text class="menu-arrow">›</text>
     </view>
-
     <view class="menu-item" bindtap="goAbout">
       <text class="menu-icon">ℹ️</text>
       <text class="menu-label">关于系统</text>
       <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item unbind-item" wx:if="{{role === 'doctor'}}" bindtap="onUnbindDoctor">
+      <text class="menu-icon">🔓</text>
+      <text class="menu-label">解除医生身份</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+</view>
+
+<!-- 邀请码输入弹窗 -->
+<view class="modal-mask" wx:if="{{showBindModal}}" bindtap="closeBindModal">
+  <view class="modal-dialog" catchtap>
+    <view class="modal-header">
+      <text class="modal-title">医生身份认证</text>
+      <text class="modal-close" bindtap="closeBindModal">✕</text>
+    </view>
+    <view class="modal-body">
+      <text class="modal-hint">请输入管理员提供的邀请码完成认证</text>
+      <input
+        class="modal-input"
+        placeholder="请输入邀请码"
+        value="{{inviteCode}}"
+        bindinput="onInviteCodeInput"
+        maxlength="16"
+        focus="{{showBindModal}}"
+      />
+    </view>
+    <view class="modal-footer">
+      <button class="modal-btn btn-cancel" bindtap="closeBindModal">取消</button>
+      <button class="modal-btn btn-confirm" bindtap="onSubmitBind" disabled="{{binding}}">
+        {{binding ? '认证中...' : '确认认证'}}
+      </button>
     </view>
   </view>
 </view>

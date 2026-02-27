@@ -1,11 +1,17 @@
 """医生模型"""
 
+import secrets
 from datetime import datetime
 from sqlalchemy import String, Text, Boolean, Integer, ForeignKey, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 from app.models.doctor_clinic import doctor_clinics
+
+
+def _generate_invite_code() -> str:
+    """生成 8 位大写字母+数字的邀请码"""
+    return secrets.token_hex(4).upper()
 
 
 class Doctor(Base):
@@ -35,6 +41,10 @@ class Doctor(Base):
     )
     avatar_url: Mapped[str | None] = mapped_column(
         String(512), nullable=True, comment="医生头像"
+    )
+    invite_code: Mapped[str | None] = mapped_column(
+        String(16), unique=True, nullable=True, default=_generate_invite_code,
+        comment="医生身份绑定邀请码 (小程序端用户输入此码绑定为医生)"
     )
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, comment="是否在职"

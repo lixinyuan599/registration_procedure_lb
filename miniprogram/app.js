@@ -6,10 +6,10 @@ const api = require('./services/api');
 /**
  * 开发模式配置
  * DEV_MODE = true 时使用固定 openid 登录，避免每次 wx.login() 生成新用户
- * 发布上线前务必设为 false
+ * 体验版/正式版务必设为 false
  */
-const DEV_MODE = true;
-const DEV_OPENID = 'dev_doctor_001';  // 开发用固定 openid，可按需切换
+const DEV_MODE = false;
+const DEV_OPENID = 'dev_doctor_001';
 
 App({
   globalData: {
@@ -76,9 +76,9 @@ App({
     if (cached) {
       this.globalData.tenantId = cached;
       console.log('从缓存恢复企业, tenantId:', cached);
-    } else if (DEV_MODE) {
+    } else {
       this.globalData.tenantId = 1;
-      console.log('[DEV] 使用默认企业 tenantId=1');
+      console.log('使用默认企业 tenantId=1');
     }
   },
 
@@ -169,6 +169,9 @@ App({
   ensureLogin() {
     if (this.globalData.token) {
       return Promise.resolve();
+    }
+    if (this.globalData.loginPromise) {
+      return this.globalData.loginPromise;
     }
     return this.login();
   },

@@ -36,13 +36,21 @@
   margin-bottom: 8rpx;
 }
 
+.role-tags {
+  display: flex;
+  align-items: center;
+}
+
 .user-role {
   font-size: 22rpx;
   color: #fff;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(82, 196, 26, 0.5);
   padding: 4rpx 16rpx;
   border-radius: 20rpx;
-  align-self: flex-start;
+}
+
+.role-patient {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .role-admin {
@@ -96,4 +104,108 @@
   font-size: 36rpx;
   color: #ccc;
   flex-shrink: 0;
+}
+
+.unbind-item .menu-label {
+  color: #999;
+}
+
+/* 邀请码弹窗 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-dialog {
+  width: 600rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 32rpx 16rpx;
+}
+
+.modal-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-close {
+  font-size: 36rpx;
+  color: #999;
+  padding: 8rpx;
+}
+
+.modal-body {
+  padding: 16rpx 32rpx 32rpx;
+}
+
+.modal-hint {
+  font-size: 26rpx;
+  color: #888;
+  margin-bottom: 24rpx;
+  display: block;
+}
+
+.modal-input {
+  width: 100%;
+  height: 88rpx;
+  border: 2rpx solid #d0d5dd;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 32rpx;
+  letter-spacing: 4rpx;
+  text-transform: uppercase;
+}
+
+.modal-input:focus {
+  border-color: #4A90D9;
+}
+
+.modal-footer {
+  display: flex;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.modal-btn {
+  flex: 1;
+  height: 96rpx;
+  line-height: 96rpx;
+  text-align: center;
+  font-size: 30rpx;
+  border: none;
+  border-radius: 0;
+  background: #fff;
+}
+
+.modal-btn::after {
+  border: none;
+}
+
+.btn-cancel {
+  color: #666;
+  border-right: 1rpx solid #f0f0f0;
+}
+
+.btn-confirm {
+  color: #4A90D9;
+  font-weight: 600;
+}
+
+.btn-confirm[disabled] {
+  color: #ccc;
 }
